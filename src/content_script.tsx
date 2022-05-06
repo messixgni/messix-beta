@@ -11,7 +11,9 @@ const checkNewNotification = () => {
   }
 };
 const check = () => {
+  //未読メッセージの確認
   checkNewNotification();
+  //未返信メッセージ確認
 };
 
 const loop = setInterval(check, 5000);
