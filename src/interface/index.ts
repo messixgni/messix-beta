@@ -1,4 +1,4 @@
-import { ChatworkRoom } from "./dbTable";
+import { ChatworkRoomTable } from "./dbTable";
 
 export type BackgroundMessage = {
   requestKind:
@@ -9,5 +9,10 @@ export type BackgroundMessage = {
     | "postChatworkMessage";
 };
 export type BgMsgChatworkRoom = BackgroundMessage & {
-  data?: ChatworkRoom;
+  data?: ChatworkRoomTable;
+};
+
+export type ChatworkRoom = {
+  rid: string;
+  name: string;
 };
