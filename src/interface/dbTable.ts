@@ -1,4 +1,4 @@
-export interface ChatworkRoom {
+export interface ChatworkRoomTable {
   id?: number;
   rid: string;
   isActive: boolean;
@@ -6,11 +6,10 @@ export interface ChatworkRoom {
   status: "normal" | "unread" | "unreply";
 }
 
-export interface ChatworkMessage {
+export interface ChatworkMessageTable {
   id?: number;
   roomId: number;
   name: string;
-  imgUrl?: string;
   content: string;
   createAt: Date;
 }
