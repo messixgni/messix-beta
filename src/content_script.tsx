@@ -1,4 +1,4 @@
-import { BackgroundMessage } from "./interface";
+import { BackgroundMessage, BgMsgChatworkRooms } from "./interface";
 import { ChatworkRoomTable } from "./interface/dbTable";
 
 const checkNewNotification = async () => {
@@ -6,7 +6,7 @@ const checkNewNotification = async () => {
   chrome.runtime.sendMessage<BackgroundMessage, ChatworkRoomTable[] | undefined>(
     sendMessage,
     (response) => {
-      if (response === undefined) return;
+      if (response === undefined || response.length === 0) return;
       //状態が変わっているRoomをdiffListに格納する
       const diffList: ChatworkRoomTable[] = [];
       for (let i = 0; i < document.getElementById("RoomList")!.children!.length; i++) {
@@ -20,10 +20,18 @@ const checkNewNotification = async () => {
           const targetRoom = response.filter((room) => room.rid === rid)[0];
           if (unread && targetRoom.status !== "unread") {
             diffList.push(targetRoom);
+            diffList[diffList.length - 1].status = "unread";
           }
         }
       }
       //diffListをDBに適用する
+      chrome.runtime.sendMessage<BgMsgChatworkRooms, any>(
+        {
+          requestKind: "putChatworkRoom",
+          data: diffList,
+        },
+        (res) => {}
+      );
     }
   );
 };
@@ -32,5 +40,5 @@ const check = () => {
   checkNewNotification();
   //未返信メッセージ確認
 };
-
-const loop = setInterval(check, 5000);
+let loop: NodeJS.Timer;
+if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 5000);
