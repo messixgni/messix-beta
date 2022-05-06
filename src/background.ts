@@ -11,7 +11,7 @@ const postChatworkRoom = async (bgMsgChatworkRoom: BgMsgChatworkRoom) => {
 };
 const getChatworkRoom = async () => {
   try {
-    const rooms = await db.chatworkRoom.toArray();
+    const rooms = await db.chatworkRoom.where({ isActive: true }).toArray();
     return rooms;
   } catch (err) {
     return undefined;
