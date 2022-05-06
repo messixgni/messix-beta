@@ -3,9 +3,11 @@ import ReactDOM from "react-dom";
 import { Container, Col, Row, Navbar, Button } from "react-bootstrap";
 import { ChatworkRoom } from "./interface";
 import { db } from "./db";
+import { ChatworkRoomTable } from "./interface/dbTable";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
+  const [unreads, setUnreads] = useState<ChatworkRoomTable[]>([]);
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
@@ -19,6 +21,11 @@ const Popup = () => {
       });
     };
     getBrowserActiveTabInfo();
+    const getUnreads = async () => {
+      const unreadList = await db.chatworkRoom.toArray();
+      setUnreads(unreadList);
+    };
+    getUnreads();
   }, []);
   const onClickAddManageBtn = () => {
     db.chatworkRoom.add({
@@ -47,7 +54,11 @@ const Popup = () => {
           )}
         </Row>
         <Row>
-          <p>HELLO</p>
+          {unreads.map((unread) => (
+            <p>
+              {unread.name}:{unread.status}
+            </p>
+          ))}
         </Row>
       </Container>
     </div>
