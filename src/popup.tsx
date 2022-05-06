@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import {} from "react-bootstrap";
 
 const Popup = () => {
   const [count, setCount] = useState(0);
@@ -33,19 +35,11 @@ const Popup = () => {
   };
 
   return (
-    <>
-      <ul style={{ minWidth: "700px" }}>
-        <li>Current URL: {currentURL}</li>
-        <li>Current Time: {new Date().toLocaleTimeString()}</li>
-      </ul>
-      <button
-        onClick={() => setCount(count + 1)}
-        style={{ marginRight: "5px" }}
-      >
-        count up
-      </button>
-      <button onClick={changeBackground}>change background</button>
-    </>
+    <div style={{ width: "500px" }}>
+      <div
+        style={{ display: "block", height: "50px", width: "100%", backgroundColor: "lightgray" }}
+      ></div>
+    </div>
   );
 };
 
