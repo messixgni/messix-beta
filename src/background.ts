@@ -1,5 +1,5 @@
 import { db, MessixDB } from "./db";
-import { BackgroundMessage, BgMsgChatworkRoom } from "./interface";
+import { BackgroundMessage, BgMsgChatworkRoom, BgMsgChatworkRooms } from "./interface";
 
 const postChatworkRoom = async (bgMsgChatworkRoom: BgMsgChatworkRoom) => {
   try {
@@ -11,27 +11,42 @@ const postChatworkRoom = async (bgMsgChatworkRoom: BgMsgChatworkRoom) => {
 };
 const getChatworkRoom = async () => {
   try {
-    const rooms = await db.chatworkRoom.where({ isActive: true }).toArray();
+    const rooms = await db.chatworkRoom.toArray();
     return rooms;
   } catch (err) {
     return undefined;
   }
 };
+const putChatworkRoom = async (bgMsgChatworkRooms: BgMsgChatworkRooms) => {
+  try {
+    bgMsgChatworkRooms.data?.forEach((room) => {
+      db.chatworkRoom.put(room);
+    });
+  } catch (err) {}
+};
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const backgroundMessage: BackgroundMessage = message;
   switch (backgroundMessage.requestKind) {
     case "postChatworkRoom":
-      sendResponse(await postChatworkRoom(message));
+      postChatworkRoom(message).then((res) => {
+        sendResponse(res);
+      });
       break;
     case "getChatworkRoom":
-      sendResponse(await getChatworkRoom());
+      getChatworkRoom().then((res) => {
+        sendResponse(res);
+      });
       break;
     case "putChatworkRoom":
-    case "deleteChatworkRoom":
+      putChatworkRoom(message).then((res) => {
+        sendResponse(true);
+      });
+
       break;
 
     case "postChatworkMessage":
       break;
   }
+  return true;
 });
