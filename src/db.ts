@@ -1,16 +1,16 @@
 import Dexie, { Table } from "dexie";
-import { ChatworkMessage, ChatworkRoom } from "./interface/dbTable";
+import { ChatworkMessageTable, ChatworkRoomTable } from "./interface/dbTable";
 const dbName = "messix_mvp1";
 
 export class MessixDB extends Dexie {
-  chatworkRoom!: Table<ChatworkRoom>;
-  chatworkMessage!: Table<ChatworkMessage>;
+  chatworkRoom!: Table<ChatworkRoomTable>;
+  chatworkMessage!: Table<ChatworkMessageTable>;
 
   constructor() {
     super(dbName);
     this.version(1).stores({
-      chatworkRoom: "++id, rid, name, status",
-      chatworkMessage: "++id, rid, name, imgUrl, content, createAt",
+      chatworkRoom: "++id, rid, isActive, name, status",
+      chatworkMessage: "++id, roomId, name, content, createAt",
     });
   }
 }
