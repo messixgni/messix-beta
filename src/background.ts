@@ -9,7 +9,7 @@ const postChatworkRoom = async (bgMsgChatworkRoom: BgMsgChatworkRoom) => {
   }
   return true;
 };
-const getChatworkRoom = async (bgMsgChatworkRoom: BgMsgChatworkRoom) => {
+const getChatworkRoom = async () => {
   try {
     const rooms = await db.chatworkRoom.toArray();
     return rooms;
@@ -22,10 +22,11 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   const backgroundMessage: BackgroundMessage = message;
   switch (backgroundMessage.requestKind) {
     case "postChatworkRoom":
-      const res = await postChatworkRoom(message);
-      sendResponse(res);
+      sendResponse(await postChatworkRoom(message));
       break;
     case "getChatworkRoom":
+      sendResponse(await getChatworkRoom());
+      break;
     case "putChatworkRoom":
     case "deleteChatworkRoom":
       break;
