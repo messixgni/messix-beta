@@ -1,44 +1,55 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import {} from "react-bootstrap";
+import { Container, Col, Row, Navbar, Button } from "react-bootstrap";
+import { ChatworkRoom } from "./interface";
+import { db } from "./db";
 
 const Popup = () => {
-  const [count, setCount] = useState(0);
-  const [currentURL, setCurrentURL] = useState<string>();
-
+  const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
   useEffect(() => {
-    chrome.action.setBadgeText({ text: count.toString() });
-  }, [count]);
-
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      setCurrentURL(tabs[0].url);
-    });
+    const getBrowserActiveTabInfo = async () => {
+      let queryOptions = { active: true, currentWindow: true };
+      let [tab] = await chrome.tabs.query(queryOptions);
+      if (tab.url!.indexOf("chatwork.com") === -1) return;
+      const rid = tab.url!.substring(30);
+      if ((await db.chatworkRoom.where({ rid: rid }).count()) !== 0) return;
+      setUnmanagedRoom({
+        name: tab.title!.substring(11),
+        rid: rid,
+      });
+    };
+    getBrowserActiveTabInfo();
   }, []);
-
-  const changeBackground = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(
-          tab.id,
-          {
-            color: "#555555",
-          },
-          (msg) => {
-            console.log("result message:", msg);
-          }
-        );
-      }
+  const onClickAddManageBtn = () => {
+    db.chatworkRoom.add({
+      name: unmanagedRoom!.name,
+      rid: unmanagedRoom!.rid,
+      isActive: true,
+      status: "normal",
     });
+    setUnmanagedRoom(undefined);
   };
-
   return (
-    <div style={{ width: "500px" }}>
-      <div
-        style={{ display: "block", height: "50px", width: "100%", backgroundColor: "lightgray" }}
-      ></div>
+    <div style={{ width: "600px" }}>
+      <Container fluid>
+        <Row style={{ height: "50px", backgroundColor: "lightgray" }}>
+          {unmanagedRoom ? (
+            <>
+              <Col xs={10} className="d-flex align-items-center">
+                <p>『{unmanagedRoom.name}』のチャットを通知管理しますか？</p>
+              </Col>
+              <Col xs={2} className="d-flex align-items-center">
+                <Button onClick={onClickAddManageBtn}>はい</Button>
+              </Col>
+            </>
+          ) : (
+            <></>
+          )}
+        </Row>
+        <Row>
+          <p>HELLO</p>
+        </Row>
+      </Container>
     </div>
   );
 };
