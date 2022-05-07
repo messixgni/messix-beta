@@ -16,7 +16,7 @@ const Popup = () => {
       const rid = tab.url!.substring(30);
       if ((await db.chatworkRoom.where({ rid: rid }).count()) !== 0) return;
       setUnmanagedRoom({
-        name: tab.title!.substring(11),
+        name: tab.title!.split("-")[1].substring(1),
         rid: rid,
       });
     };
