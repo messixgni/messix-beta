@@ -1,0 +1,17 @@
+.popup-tab {
+  font-size: large;
+  height: 40px;
+  background-color: white;
+  margin: 5px 0;
+}
+.popup-tab:hover {
+  background-color: lightgray;
+}
+
+.popup-tab-selected {
+  background-color: lightgray;
+  
+}
+.popup-tab-selected p{
+  color: rgb(255, 97, 121);
+}
