@@ -50,3 +50,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   return true;
 });
+
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  if (tab.url?.indexOf("chatwork.com") === -1 || tab.url?.indexOf("rid") === -1) return;
+  const result = await db.chatworkRoom
+    .filter((room) => room.rid === tab.url?.split("rid")[1])
+    .toArray();
+  if (result.length === 0) return;
+  const target = result[0];
+  if (target.status !== "unread") return;
+  target.status = "unreply";
+  db.chatworkRoom.put(target);
+});
