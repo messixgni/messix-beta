@@ -4,12 +4,13 @@ import { Container, Col, Row, Navbar, Button } from "react-bootstrap";
 import { ChatworkRoom } from "./interface";
 import { db } from "./db";
 import { ChatworkRoomTable } from "./interface/dbTable";
+import { useLiveQuery } from "dexie-react-hooks";
 import UnreplyListItem from "./components/UnreplyListItem";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
-  const [unreads, setUnreads] = useState<ChatworkRoomTable[]>([]);
-  const [unreplys, setUnreplys] = useState<ChatworkRoomTable[]>([]);
+  const unreads = useLiveQuery(() => db.chatworkRoom.where("status").equals("unread").toArray());
+  const unreplys = useLiveQuery(() => db.chatworkRoom.where("status").equals("unreply").toArray());
   const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
@@ -24,18 +25,6 @@ const Popup = () => {
       });
     };
     getBrowserActiveTabInfo();
-    const getUnreads = async () => {
-      const unreadList = await db.chatworkRoom.filter((room) => room.status === "unread").toArray();
-      setUnreads(unreadList);
-    };
-    getUnreads();
-    const getUnreplys = async () => {
-      const unreplyList = await db.chatworkRoom
-        .filter((room) => room.status === "unreply")
-        .toArray();
-      setUnreplys(unreplyList);
-    };
-    getUnreplys();
   }, []);
   const onClickAddManageBtn = () => {
     db.chatworkRoom.add({
@@ -63,45 +52,49 @@ const Popup = () => {
             <></>
           )}
         </Row>
-        <Row style={{ height: "400px" }}>
-          <Col xs={2} style={{ borderRight: "5px solid lightgray" }}>
-            <Row>
-              <div
-                className={
-                  "d-flex align-items-center popup-tab" +
-                  (isUnreadView ? " popup-tab-selected" : "")
-                }
-                onClick={() => setIsUnreadView(true)}
-              >
-                <p>未読{unreads.length === 0 ? "" : ` [${unreads.length}]`}</p>
-              </div>
-            </Row>
-            <Row>
-              <div
-                className={
-                  "d-flex align-items-center popup-tab" +
-                  (isUnreadView ? "" : " popup-tab-selected")
-                }
-                onClick={() => setIsUnreadView(false)}
-              >
-                <p>未返信</p>
-              </div>
-            </Row>
-          </Col>
-          <Col xs={10}>
-            {isUnreadView ? (
-              <a href="https://www.chatwork.com" target="_blank">
-                {`未読メッセージが${unreads.length}件あります`}
-              </a>
-            ) : (
-              <>
-                {unreplys.map((unreply) => (
-                  <UnreplyListItem chatworkRoom={unreply} />
-                ))}
-              </>
-            )}
-          </Col>
-        </Row>
+        {unreads && unreplys ? (
+          <Row style={{ height: "400px" }}>
+            <Col xs={2} style={{ borderRight: "5px solid lightgray" }}>
+              <Row>
+                <div
+                  className={
+                    "d-flex align-items-center popup-tab" +
+                    (isUnreadView ? " popup-tab-selected" : "")
+                  }
+                  onClick={() => setIsUnreadView(true)}
+                >
+                  <p>未読{unreads.length === 0 ? "" : ` [${unreads.length}]`}</p>
+                </div>
+              </Row>
+              <Row>
+                <div
+                  className={
+                    "d-flex align-items-center popup-tab" +
+                    (isUnreadView ? "" : " popup-tab-selected")
+                  }
+                  onClick={() => setIsUnreadView(false)}
+                >
+                  <p>未返信</p>
+                </div>
+              </Row>
+            </Col>
+            <Col xs={10}>
+              {isUnreadView ? (
+                <a href="https://www.chatwork.com" target="_blank">
+                  {`未読メッセージが${unreads.length}件あります`}
+                </a>
+              ) : (
+                <>
+                  {unreplys.map((unreply) => (
+                    <UnreplyListItem chatworkRoom={unreply} />
+                  ))}
+                </>
+              )}
+            </Col>
+          </Row>
+        ) : (
+          <></>
+        )}
       </Container>
     </div>
   );
