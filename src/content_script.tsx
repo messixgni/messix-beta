@@ -1,4 +1,10 @@
-import { BackgroundMessage, BgMsgChatworkRooms, MessageUser } from "./interface";
+import {
+  BackgroundMessage,
+  BgMsgChangeRoomStatus,
+  BgMsgChatworkMessage,
+  BgMsgChatworkRooms,
+  MessageUser,
+} from "./interface";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 
 const checkNewNotification = async () => {
@@ -67,6 +73,7 @@ type GetMessages = () => ChatworkMessageTable[];
 const getMessages: GetMessages = () => {
   let rtnArray: ChatworkMessageTable[] = [];
   let messixUser = getMessixUserMessageUser();
+  const rid = location.href.split("rid")[1];
   if (!messixUser) return rtnArray;
   const timeLineEmenents = document.getElementById("_timeLine");
   const messageElements = timeLineEmenents?.getElementsByClassName("_message");
@@ -76,16 +83,16 @@ const getMessages: GetMessages = () => {
     const tmpUser = getMessageUser(messageElements[i]);
     if (tmpUser !== undefined) currentUser = tmpUser;
     const spanElements = messageElements[i].getElementsByTagName("span");
-    const rid = messageElements[i].getAttribute("data-rid");
     if (spanElements.length === 0 || rid === null) continue;
     const content = spanElements[0].textContent;
-    const unixTime = spanElements[0]
+    const unixTime = messageElements[i]
       .getElementsByClassName("_timeStamp")[0]
       .getAttribute("data-tm");
     if (content === null || unixTime === null) continue;
     const message: ChatworkMessageTable = {
-      roomId: parseInt(rid),
+      rid: rid,
       name: currentUser?.name!,
+      iconUrl: currentUser?.iconUrl,
       content: content,
       createAt: new Date(parseInt(unixTime) * 1000),
     };
@@ -94,11 +101,62 @@ const getMessages: GetMessages = () => {
 
   return rtnArray;
 };
-const checkReply = () => {};
+const checkReply = () => {
+  if (location.href.indexOf("chatwork.com") !== -1 && location.href.indexOf("rid") !== -1) {
+    const rid = location.href.split("rid")[1];
+    const messages = getMessages();
+    for (let i = 0; i < messages.length; i++) {
+      console.log(`${messages[i].name}:${messages[i].content}`);
+    }
+    const latestMessage = messages[messages.length - 1];
+    //最後のMessageがユーザー自身のものか検証
+
+    const messixUser = getMessixUserMessageUser();
+    console.log(`${latestMessage.name}:${messixUser?.name}`);
+    console.log(`${latestMessage.iconUrl}:${messixUser?.iconUrl}`);
+    if (latestMessage.name === messixUser?.name && latestMessage.iconUrl === messixUser.iconUrl) {
+      chrome.runtime.sendMessage<BgMsgChangeRoomStatus, boolean>({
+        requestKind: "changeRoomStatus",
+        rid: rid,
+        status: "normal",
+      });
+    }
+
+    //最後のMessageをDBに格納
+    const sendMessage: BgMsgChatworkMessage = {
+      requestKind: "getLatestChatworkMessage",
+      targetRid: rid,
+    };
+    chrome.runtime.sendMessage<BgMsgChatworkMessage, ChatworkMessageTable | undefined>(
+      sendMessage,
+      (res) => {
+        console.log(res);
+        if (!res) {
+          chrome.runtime.sendMessage<BgMsgChatworkMessage, boolean>(
+            {
+              requestKind: "postChatworkMessage",
+              data: latestMessage,
+            },
+            (result) => {}
+          );
+        } else if (res.createAt !== latestMessage.createAt) {
+          chrome.runtime.sendMessage<BgMsgChatworkMessage, boolean>(
+            {
+              requestKind: "postChatworkMessage",
+              data: latestMessage,
+            },
+            (result) => {}
+          );
+        }
+      }
+    );
+  }
+};
 const check = () => {
   //未読メッセージの確認
   checkNewNotification();
   //未返信メッセージ確認
+  checkReply();
 };
 let loop: NodeJS.Timer;
 if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 5000);
