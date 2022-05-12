@@ -10,7 +10,7 @@ export class MessixDB extends Dexie {
     super(dbName);
     this.version(1).stores({
       chatworkRoom: "++id, rid, isActive, name, status",
-      chatworkMessage: "++id, roomId, name, content, createAt",
+      chatworkMessage: "++id, rid, name, iconUrl, content, createAt",
     });
   }
 }
