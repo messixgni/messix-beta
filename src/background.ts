@@ -1,5 +1,11 @@
 import { db, MessixDB } from "./db";
-import { BackgroundMessage, BgMsgChatworkRoom, BgMsgChatworkRooms } from "./interface";
+import {
+  BackgroundMessage,
+  BgMsgChangeRoomStatus,
+  BgMsgChatworkMessage,
+  BgMsgChatworkRoom,
+  BgMsgChatworkRooms,
+} from "./interface";
 
 const postChatworkRoom = async (bgMsgChatworkRoom: BgMsgChatworkRoom) => {
   try {
@@ -24,6 +30,38 @@ const putChatworkRoom = async (bgMsgChatworkRooms: BgMsgChatworkRooms) => {
     });
   } catch (err) {}
 };
+const getLatestChatworkMessage = async (bgMsgChatworkMessage: BgMsgChatworkMessage) => {
+  try {
+    const messages = await db.chatworkMessage
+      .filter((cm) => cm.rid === bgMsgChatworkMessage.targetRid)
+      .sortBy("createAt");
+    if (messages.length === 0) return undefined;
+    return messages[messages.length - 1];
+  } catch (err) {
+    return undefined;
+  }
+};
+const changeRoomStatus = async (bgMsgChangeRoomStatus: BgMsgChangeRoomStatus) => {
+  try {
+    const targetRoom = await db.chatworkRoom
+      .filter((cr) => cr.rid === bgMsgChangeRoomStatus.rid.toString())
+      .toArray();
+    if (targetRoom.length === 0) return false;
+    targetRoom[0].status = bgMsgChangeRoomStatus.status;
+    await db.chatworkRoom.put(targetRoom[0]);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+const postChatworkMessage = async (bgMsgChatworkMessage: BgMsgChatworkMessage) => {
+  try {
+    await db.chatworkMessage.add(bgMsgChatworkMessage.data!);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const backgroundMessage: BackgroundMessage = message;
@@ -42,10 +80,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       putChatworkRoom(message).then((res) => {
         sendResponse(true);
       });
-
       break;
-
+    case "changeRoomStatus":
+      changeRoomStatus(message).then((res) => {
+        sendResponse(res);
+      });
+      break;
     case "postChatworkMessage":
+      postChatworkMessage(message).then((res) => sendResponse(res));
+      break;
+    case "getLatestChatworkMessage":
+      getLatestChatworkMessage(message).then((res) => sendResponse(res));
       break;
   }
   return true;
