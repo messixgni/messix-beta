@@ -94,11 +94,11 @@ const Popup = () => {
                 {`未読メッセージが${unreads.length}件あります`}
               </a>
             ) : (
-              <>
+              <Container fluid className="p-0">
                 {unreplys.map((unreply) => (
                   <UnreplyListItem chatworkRoom={unreply} />
                 ))}
-              </>
+              </Container>
             )}
           </Col>
         </Row>
