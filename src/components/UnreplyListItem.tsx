@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useLiveQuery } from "dexie-react-hooks";
+import React from "react";
 import { Col, Row, Form } from "react-bootstrap";
 import { db } from "../db";
-import { ChatworkMessageTable, ChatworkRoomTable } from "../interface/dbTable";
+import { ChatworkRoomTable } from "../interface/dbTable";
 
 type UnreplyListItemProps = {
   chatworkRoom: ChatworkRoomTable;
-  onChangeToNormal?: (chatworkRoomTable: ChatworkRoomTable) => void;
 };
 
-const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProps) => {
-  const [latestMessage, setLatestMessage] = useState<ChatworkMessageTable>();
-  useEffect(() => {
-    //あとでhookにする
-    try {
-      const getLatestMessage = async () => {
-        const messages = await db.chatworkMessage.where("rid").equals(chatworkRoom.rid).toArray();
-        if (messages.length === 0) return;
-        setLatestMessage(messages[messages.length - 1]);
-      };
-      getLatestMessage();
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
+  const latestMessage = useLiveQuery(() =>
+    db.chatworkMessage.where("rid").equals(chatworkRoom.rid).last()
+  );
   const getElapsedTimeText: (target: Date | undefined) => string = (target) => {
     if (!target) return "";
     try {
@@ -47,6 +36,10 @@ const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProp
     }
     return "";
   };
+  const changeToNormal = () => {
+    chatworkRoom.status = "normal";
+    db.chatworkRoom.put(chatworkRoom);
+  };
   return (
     <Form className="w-100 d-inline-block">
       <Form.Group>
@@ -56,9 +49,7 @@ const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProp
               <Form.Check
                 type={"radio"}
                 id={`${chatworkRoom.rid}-radio`}
-                onChange={() => {
-                  if (onChangeToNormal) onChangeToNormal(chatworkRoom!);
-                }}
+                onChange={changeToNormal}
               ></Form.Check>
             </Col>
             <Col className="d-inline-block align-items-center" xs={4}>
