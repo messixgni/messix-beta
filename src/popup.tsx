@@ -10,8 +10,11 @@ import UnreplyListItem from "./components/UnreplyListItem";
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
   const unreads = useLiveQuery(() => db.chatworkRoom.where("status").equals("unread").toArray());
-  const unreplys = useLiveQuery(() => db.chatworkRoom.where("status").equals("unreply").toArray());
+  const [unreplys, setUnreplys] = useState<ChatworkRoomTable[]>([]);
   const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
+  const getUnreplys = async () => {
+    setUnreplys(await db.chatworkRoom.where("status").equals("unreply").toArray());
+  };
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
@@ -25,6 +28,7 @@ const Popup = () => {
       });
     };
     getBrowserActiveTabInfo();
+    getUnreplys();
   }, []);
   const onClickAddManageBtn = () => {
     db.chatworkRoom.add({
@@ -34,6 +38,14 @@ const Popup = () => {
       status: "normal",
     });
     setUnmanagedRoom(undefined);
+  };
+  const changeToNormal = (targetRoom: ChatworkRoomTable) => {
+    targetRoom.status = "normal";
+    const changeState = async () => {
+      await db.chatworkRoom.put(targetRoom);
+      getUnreplys();
+    };
+    changeState();
   };
   return (
     <div style={{ width: "600px" }}>
@@ -86,7 +98,7 @@ const Popup = () => {
               ) : (
                 <>
                   {unreplys.map((unreply) => (
-                    <UnreplyListItem chatworkRoom={unreply} />
+                    <UnreplyListItem chatworkRoom={unreply} onChangeToNormal={changeToNormal} />
                   ))}
                 </>
               )}
