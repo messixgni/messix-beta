@@ -34,7 +34,6 @@ const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
       }
       return "err";
     }
-    return "";
   };
   const changeToNormal = () => {
     chatworkRoom.status = "normal";
