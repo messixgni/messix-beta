@@ -12,6 +12,19 @@ const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
   const latestMessage = useLiveQuery(() =>
     db.chatworkMessage.where("rid").equals(chatworkRoom.rid).last()
   );
+  const getReceicedTimeText: (target: Date | undefined) => string = (target) => {
+    if (!target) return "";
+    try {
+      const hour = new Date(target).getHours().toString();
+      const min = new Date(target).getMinutes().toString();
+      return hour + ":" + min;
+    } catch (err) {
+      if (err instanceof Error) {
+        return err.message;
+      }
+      return "err";
+    }
+  }
   const getElapsedTimeText: (target: Date | undefined) => string = (target) => {
     if (!target) return "";
     try {
@@ -40,36 +53,37 @@ const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
     db.chatworkRoom.put(chatworkRoom);
   };
   return (
-    <Form className="w-100 d-inline-block">
-      <Form.Group>
-        <Form.Label className="m-auto w-100">
-          <Row className="align-items-center py-0">
-            <Col xs={"auto"}>
-              <Form.Check
-                type={"radio"}
-                id={`${chatworkRoom.rid}-radio`}
-                onChange={changeToNormal}
-              ></Form.Check>
-            </Col>
-            <Col className="d-inline-block align-items-center" xs={4}>
-              <div className="mx-auto">
-                <p className="small fw-bold m-0 text-truncate">{chatworkRoom.name}</p>
-                <p className="m-0 text-truncate">{latestMessage ? latestMessage.content : ""}</p>
-              </div>
-            </Col>
-            <Col className="align-items-center text-secondary" xs={"auto"}>
-              12:54
-            </Col>
-            <Col className="align-items-center" xs={"auto"}>
-              <p className="small text-danger m-0">
-                {getElapsedTimeText(latestMessage ? latestMessage.createAt : undefined)}
-                に受信しました。<br></br>返信忘れてませんか？
-              </p>
-            </Col>
-          </Row>
-        </Form.Label>
-      </Form.Group>
-    </Form>
+    <div className="d-flex flex-row align-items-stretch">
+      <Form className="">
+        <Form.Group className="h-100">
+          <Form.Label className="h-100 d-flex align-items-center px-2">
+            <Form.Check
+              className="unreply-item"
+              type={"radio"}
+              id={`${chatworkRoom.rid}-radio`}
+              onChange={changeToNormal}
+            ></Form.Check>
+          </Form.Label>
+        </Form.Group>
+      </Form>
+      <a className="d-flex flex-row room-link" href={`https://chatwork.com#!rid${chatworkRoom.rid}`} target="_blank" >
+        <div className="d-flex align-items-center mx-2">
+          <div className="" style={{width: "200px"}}>
+            <p className="small fw-bold m-0 text-truncate received-message">{latestMessage ? latestMessage.name : ""}</p>
+            <p className="m-0 text-truncate received-message">{latestMessage ? latestMessage.content : ""}</p>
+          </div>
+        </div>
+        <div className="d-flex align-items-center mx-2">
+          <p className="small received-time m-0">{getReceicedTimeText(latestMessage ? latestMessage.createAt : undefined)}</p>
+        </div>
+        <div className="align-items-center mx-2">
+          <p className="small popup-warning-text m-0">
+            {getElapsedTimeText(latestMessage ? latestMessage.createAt : undefined)}
+            に受信しました。<br></br>返信忘れてませんか？
+          </p>
+        </div>
+      </a>
+    </div>
   );
 };
 
