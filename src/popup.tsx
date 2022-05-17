@@ -6,6 +6,8 @@ import { db } from "./db";
 import { useLiveQuery } from "dexie-react-hooks";
 import UnreplyListItem from "./components/UnreplyListItem";
 import SettingPage from "./components/SettignPage";
+import ForceCheckedToast from "./components/ForceCheckedToast";
+import { ChatworkRoomTable } from "./interface/dbTable";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
@@ -13,6 +15,7 @@ const Popup = () => {
   const unreplys = useLiveQuery(() => db.chatworkRoom.where("status").equals("unreply").toArray());
   const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
+  const [lastChangedRoom, setLastChangedRoom] = useState<ChatworkRoomTable>();
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
@@ -108,12 +111,23 @@ const Popup = () => {
                     ) : (
                       <>
                         {unreplys.map((unreply) => (
-                          <UnreplyListItem chatworkRoom={unreply} />
+                          <UnreplyListItem
+                            chatworkRoom={unreply}
+                            onChangeToNormal={(chatworkRoom) => {
+                              setLastChangedRoom(chatworkRoom);
+                            }}
+                          />
                         ))}
                       </>
                     )}
                   </>
                 )}
+                <ForceCheckedToast
+                  lastChangedRoom={lastChangedRoom}
+                  onClose={() => {
+                    setLastChangedRoom(undefined);
+                  }}
+                />
               </Col>
             </>
           ) : (
