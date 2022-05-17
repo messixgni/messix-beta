@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { Container, Col, Row, Navbar, Button } from "react-bootstrap";
+import { Container, Col, Row, Button } from "react-bootstrap";
 import { ChatworkRoom } from "./interface";
 import { db } from "./db";
-import { ChatworkRoomTable } from "./interface/dbTable";
 import { useLiveQuery } from "dexie-react-hooks";
 import UnreplyListItem from "./components/UnreplyListItem";
 
