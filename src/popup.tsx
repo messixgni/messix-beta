@@ -65,13 +65,6 @@ const Popup = () => {
         <Row style={{ height: "400px" }}>
           {unreads && unreplys ? (
             <>
-              <style type="text/css">
-                {`
-                .btn-flat {
-                  background-color: none;
-                }
-                `}
-              </style>
               <Col xs={2} style={{ borderRight: "2px solid lightgray" }}>
                 <Row>
                   <div
