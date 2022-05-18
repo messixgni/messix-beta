@@ -8,6 +8,7 @@ import UnreplyListItem from "./components/UnreplyListItem";
 import SettingPage from "./components/SettignPage";
 import ForceCheckedToast from "./components/ForceCheckedToast";
 import { ChatworkRoomTable } from "./interface/dbTable";
+import { changeBadgeText } from "./util";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
@@ -30,6 +31,7 @@ const Popup = () => {
       });
     };
     getBrowserActiveTabInfo();
+    changeBadgeText();
   }, []);
   const onClickAddManageBtn = () => {
     db.chatworkRoom.add({

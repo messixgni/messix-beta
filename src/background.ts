@@ -6,6 +6,7 @@ import {
   BgMsgChatworkRoom,
   BgMsgChatworkRooms,
 } from "./interface";
+import { changeBadgeText } from "./util";
 
 const postChatworkRoom = async (bgMsgChatworkRoom: BgMsgChatworkRoom) => {
   try {
@@ -49,6 +50,7 @@ const changeRoomStatus = async (bgMsgChangeRoomStatus: BgMsgChangeRoomStatus) =>
     if (targetRoom.length === 0) return false;
     targetRoom[0].status = bgMsgChangeRoomStatus.status;
     await db.chatworkRoom.put(targetRoom[0]);
+    await changeBadgeText();
     return true;
   } catch (err) {
     return false;
@@ -105,5 +107,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   const target = result[0];
   if (target.status !== "unread") return;
   target.status = "unreply";
-  db.chatworkRoom.put(target);
+  await db.chatworkRoom.put(target);
+  await changeBadgeText();
 });
