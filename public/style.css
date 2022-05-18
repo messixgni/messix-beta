@@ -30,3 +30,6 @@
 .unreply-item {
   transform: scale(1.5);
 }
+.btn-flat {
+  background-color: none;
+}
