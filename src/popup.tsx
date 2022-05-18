@@ -65,7 +65,14 @@ const Popup = () => {
         <Row style={{ height: "400px" }}>
           {unreads && unreplys ? (
             <>
-              <Col xs={2} style={{ borderRight: "5px solid lightgray" }}>
+              <style type="text/css">
+                {`
+                .btn-flat {
+                  background-color: none;
+                }
+                `}
+              </style>
+              <Col xs={2} style={{ borderRight: "2px solid lightgray" }}>
                 <Row>
                   <div
                     className={
@@ -74,7 +81,7 @@ const Popup = () => {
                     }
                     onClick={() => setIsUnreadView(true)}
                   >
-                    <p>未読{unreads.length === 0 ? "" : ` [${unreads.length}]`}</p>
+                    <p className="m-0">未読{unreads.length === 0 ? "" : ` [${unreads.length}]`}</p>
                   </div>
                 </Row>
                 <Row>
@@ -85,11 +92,12 @@ const Popup = () => {
                     }
                     onClick={() => setIsUnreadView(false)}
                   >
-                    <p>未返信</p>
+                    <p className="m-0">未返信</p>
                   </div>
                 </Row>
                 <Row style={{ height: "300px" }} className="d-flex align-items-end">
                   <Button
+                    variant="flat"
                     className="mb-2"
                     onClick={() => {
                       setIsSettingView(!isSettingView);
