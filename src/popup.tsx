@@ -15,6 +15,7 @@ const Popup = () => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
       let [tab] = await chrome.tabs.query(queryOptions);
+      if (!tab.url) return;
       if (tab.url!.indexOf("chatwork.com") === -1) return;
       const rid = tab.url!.substring(30);
       if ((await db.chatworkRoom.where({ rid: rid }).count()) !== 0) return;
@@ -97,6 +98,13 @@ const Popup = () => {
       </Container>
     </div>
   );
+};
+
+window.onload = function () {
+  const scriptTag = document.createElement("script");
+  scriptTag.src = chrome.runtime.getURL("./analytics-override.js");
+  scriptTag.type = "text/javascript";
+  document.head.appendChild(scriptTag);
 };
 
 ReactDOM.render(
