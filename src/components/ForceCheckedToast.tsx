@@ -22,13 +22,13 @@ const ForceCheckedToast = ({ lastChangedRoom, onClose }: Props) => {
       onClose={() => {
         onClose(lastChangedRoom!);
       }}
-      className="position-fixed bottom-0 end-0"
+      className="position-fixed bottom-0 end-0 force-checked-toast"
     >
       <Toast.Header>
         <strong className="me-auto">{lastChangedRoom!.name}</strong>
       </Toast.Header>
-      <Toast.Body>
-        手動解決済みにしました{" "}
+      <Toast.Body className="d-flex align-items-center justify-content-between">
+        <p className="m-0">手動解決済みにしました{" "}</p>
         <Button onClick={onRestore} variant="danger">
           戻す
         </Button>
