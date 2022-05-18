@@ -6,9 +6,10 @@ import { ChatworkRoomTable } from "../interface/dbTable";
 
 type UnreplyListItemProps = {
   chatworkRoom: ChatworkRoomTable;
+  onChangeToNormal: (chatworkRoom: ChatworkRoomTable) => void;
 };
 
-const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
+const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProps) => {
   const latestMessage = useLiveQuery(() =>
     db.chatworkMessage.where("rid").equals(chatworkRoom.rid).last()
   );
@@ -24,7 +25,7 @@ const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
       }
       return "err";
     }
-  }
+  };
   const getElapsedTimeText: (target: Date | undefined) => string = (target) => {
     if (!target) return "";
     try {
@@ -51,6 +52,7 @@ const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
   const changeToNormal = () => {
     chatworkRoom.status = "normal";
     db.chatworkRoom.put(chatworkRoom);
+    onChangeToNormal(chatworkRoom);
   };
   return (
     <div className="d-flex flex-row align-items-stretch">
@@ -66,15 +68,25 @@ const UnreplyListItem = ({ chatworkRoom }: UnreplyListItemProps) => {
           </Form.Label>
         </Form.Group>
       </Form>
-      <a className="d-flex flex-row room-link" href={`https://chatwork.com#!rid${chatworkRoom.rid}`} target="_blank" >
+      <a
+        className="d-flex flex-row room-link"
+        href={`https://chatwork.com#!rid${chatworkRoom.rid}`}
+        target="_blank"
+      >
         <div className="d-flex align-items-center mx-2">
-          <div className="" style={{width: "200px"}}>
-            <p className="small fw-bold m-0 text-truncate received-message">{latestMessage ? latestMessage.name : ""}</p>
-            <p className="m-0 text-truncate received-message">{latestMessage ? latestMessage.content : ""}</p>
+          <div className="" style={{ width: "200px" }}>
+            <p className="small fw-bold m-0 text-truncate received-message">
+              {latestMessage ? latestMessage.name : ""}
+            </p>
+            <p className="m-0 text-truncate received-message">
+              {latestMessage ? latestMessage.content : ""}
+            </p>
           </div>
         </div>
         <div className="d-flex align-items-center mx-2">
-          <p className="small received-time m-0">{getReceicedTimeText(latestMessage ? latestMessage.createAt : undefined)}</p>
+          <p className="small received-time m-0">
+            {getReceicedTimeText(latestMessage ? latestMessage.createAt : undefined)}
+          </p>
         </div>
         <div className="align-items-center mx-2">
           <p className="small popup-warning-text m-0">
