@@ -1,9 +1,27 @@
+.sidebar {
+  width: 165px;
+}
+
+.sidebar img {
+  margin-right: 5px;
+}
+
+.MainContents {
+  padding-left: 10px;
+  font-size: 90%;
+}
+
+.managementNotification {
+  font-size: 85%;
+}
+
 .popup-tab {
   font-size: large;
   height: 40px;
   background-color: white;
   margin: 5px 0;
 }
+
 .popup-tab:hover {
   background-color: lightgray;
 }
@@ -12,27 +30,35 @@
   background-color: lightgray;
 
 }
-.popup-tab-selected p{
+
+.popup-tab-selected p {
   color: rgb(255, 97, 121);
 }
+
 .popup-warning-text {
-  color:rgb(255, 97, 121);
+  color: rgb(255, 97, 121);
 }
+
 .received-time {
   color: rgb(106, 111, 130);
 }
+
 .received-message {
   color: rgb(87, 87, 87);
 }
+
 .room-link {
   text-decoration: none;
 }
+
 .unreply-item {
   transform: scale(1.5);
 }
+
 .btn-flat {
   background-color: none;
 }
+
 .force-checked-toast {
   width: 300px;
 }
