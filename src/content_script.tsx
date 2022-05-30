@@ -159,4 +159,4 @@ const check = () => {
   checkReply();
 };
 let loop: NodeJS.Timer;
-if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 5000);
+if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 100);
