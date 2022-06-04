@@ -38,7 +38,7 @@ const Popup = () => {
       name: unmanagedRoom!.name,
       rid: unmanagedRoom!.rid,
       isActive: true,
-      status: "normal",
+      unreadCount: 0,
     });
     setUnmanagedRoom(undefined);
   };

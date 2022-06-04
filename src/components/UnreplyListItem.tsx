@@ -50,9 +50,9 @@ const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProp
     }
   };
   const changeToNormal = () => {
-    chatworkRoom.status = "normal";
+    /*chatworkRoom.status = "normal";
     db.chatworkRoom.put(chatworkRoom);
-    onChangeToNormal(chatworkRoom);
+    onChangeToNormal(chatworkRoom);*/
   };
   return (
     <div className="d-flex flex-row align-items-stretch">
@@ -76,7 +76,7 @@ const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProp
         <div className="d-flex align-items-center mx-2">
           <div className="" style={{ width: "200px" }}>
             <p className="small fw-bold m-0 text-truncate received-message">
-              {latestMessage ? latestMessage.name : ""}
+              {latestMessage ? latestMessage.userName : ""}
             </p>
             <p className="m-0 text-truncate received-message">
               {latestMessage ? latestMessage.content : ""}
