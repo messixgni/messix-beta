@@ -75,7 +75,24 @@ const Popup = () => {
                       "d-flex align-items-center popup-tab" +
                       (isUnreadView ? " popup-tab-selected" : "")
                     }
-                    onClick={() => setIsUnreadView(true)}
+                    onClick={() => {
+                      setIsUnreadView(true)
+                      const url =
+                        "https://script.google.com/macros/s/AKfycbz6sFS3b64ZDGK_6YLs65sCF68l-GHHi_0j54eLd4iDjw8AYWck5vMx2Awgo0gykNBW/exec?button=未読&action=click&count=1";
+                      const request = new XMLHttpRequest();
+                      request.open("GET", url);
+                      request.onreadystatechange = function () {
+                        if (request.readyState != 4) {
+                          // リクエスト中
+                        } else if (request.status != 200) {
+                          // 失敗
+                        } else {
+                          // 取得成功
+                          // var result = request.responseText;
+                        }
+                      };
+                      request.send(null);
+                    }}
                   >
                     <p className="m-0">未読{unreads.length === 0 ? "" : ` [${unreads.length}]`}</p>
                   </div>
@@ -86,7 +103,24 @@ const Popup = () => {
                       "d-flex align-items-center popup-tab" +
                       (isUnreadView ? "" : " popup-tab-selected")
                     }
-                    onClick={() => setIsUnreadView(false)}
+                    onClick={() => {
+                      setIsUnreadView(false)
+                      const url =
+                        "https://script.google.com/macros/s/AKfycbz6sFS3b64ZDGK_6YLs65sCF68l-GHHi_0j54eLd4iDjw8AYWck5vMx2Awgo0gykNBW/exec?button=未返信&action=click&count=1";
+                      const request = new XMLHttpRequest();
+                      request.open("GET", url);
+                      request.onreadystatechange = function () {
+                        if (request.readyState != 4) {
+                          // リクエスト中
+                        } else if (request.status != 200) {
+                          // 失敗
+                        } else {
+                          // 取得成功
+                          // var result = request.responseText;
+                        }
+                      };
+                      request.send(null);
+                    }}
                   >
                     <p className="m-0">未返信</p>
                   </div>
