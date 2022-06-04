@@ -1,6 +1,6 @@
 import { ChatworkMessageTable, ChatworkRoomTable } from "./dbTable";
 
-export type RoomStatus = "normal" | "unread" | "unreply";
+export type MessageStatus = "normal" | "unread" | "unreply" | "unmanage";
 
 export type BackgroundMessage = {
   requestKind:

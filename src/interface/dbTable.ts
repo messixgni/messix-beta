@@ -1,18 +1,21 @@
-import { RoomStatus } from ".";
+import { MessageStatus } from ".";
 
 export interface ChatworkRoomTable {
   id?: number;
   rid: string;
   isActive: boolean;
   name: string;
-  status: RoomStatus;
+  unreadCount: number;
 }
 
 export interface ChatworkMessageTable {
   id?: number;
-  rid: string;
-  name: string;
-  iconUrl?: string;
+  roomId: number;
+  mid: string;
+  status: MessageStatus;
+  isMarked: boolean;
+  userName: string;
+  userIcon: string;
   content: string;
   createAt: Date;
 }
