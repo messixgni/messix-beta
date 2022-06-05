@@ -1,6 +1,6 @@
 import Dexie, { Table } from "dexie";
 import { ChatworkMessageTable, ChatworkRoomTable } from "./interface/dbTable";
-const dbName = "messix_mvp1";
+const dbName = "messix_mvp2";
 
 export class MessixDB extends Dexie {
   chatworkRoom!: Table<ChatworkRoomTable>;
@@ -8,7 +8,7 @@ export class MessixDB extends Dexie {
 
   constructor() {
     super(dbName);
-    this.version(2).stores({
+    this.version(1).stores({
       chatworkRoom: "++id, rid, isActive, name, unreadCount",
       chatworkMessage: "++id, roomId, mid, status, isMarked, userName, userIcon, content, createAt",
     });
