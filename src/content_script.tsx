@@ -1,4 +1,4 @@
-import { BackgroundMessage, MessageUser, unreadRoom } from "./interface";
+import { SetChatworkRoomUnreadsBM, MessageUser, UnreadRoom } from "./interface";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 
 type GetMessixUserMessageUser = () => MessageUser | undefined;
@@ -72,8 +72,7 @@ const getUnreadMessages = () => {
     return;
   const roomsList = NodeList[0];
   const rooms = roomsList?.querySelectorAll('li');
-  // const unreadRoomsList: unreadRoom[]
-  const Message: BackgroundMessage = {
+  const Message: SetChatworkRoomUnreadsBM = {
     requestKind: "setChatworkRoomUnreads",
     unreadRooms: [],
   };
@@ -81,11 +80,11 @@ const getUnreadMessages = () => {
     if (elem.querySelector('li')) {
       const rid = elem.getAttribute("data-rid");
       const unreadCount = parseInt(elem.querySelector("li")?.innerText!);
-      const unreadRoom: unreadRoom = {
+      const UnreadRoom: UnreadRoom = {
         'rid': rid!,
         'unreadCount': unreadCount!
       };
-      Message.unreadRooms.push(unreadRoom);
+      Message.unreadRooms.push(UnreadRoom);
     }
   })
   chrome.runtime.sendMessage(Message);
