@@ -11,7 +11,7 @@ type Props = {
 const ForceCheckedToast = ({ lastChangedRoom, onClose }: Props) => {
   const onRestore = async () => {
     if (!lastChangedRoom) return;
-    lastChangedRoom.status = "unreply";
+    //lastChangedRoom.status = "unreply";
     await db.chatworkRoom.put(lastChangedRoom);
     onClose(lastChangedRoom);
   };
@@ -28,7 +28,7 @@ const ForceCheckedToast = ({ lastChangedRoom, onClose }: Props) => {
         <strong className="me-auto">{lastChangedRoom!.name}</strong>
       </Toast.Header>
       <Toast.Body className="d-flex align-items-center justify-content-between">
-        <p className="m-0">手動解決済みにしました{" "}</p>
+        <p className="m-0">手動解決済みにしました </p>
         <Button onClick={onRestore} variant="danger">
           戻す
         </Button>

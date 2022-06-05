@@ -10,7 +10,7 @@ export interface ChatworkRoomTable {
 
 export interface ChatworkMessageTable {
   id?: number;
-  roomId: number;
+  roomId?: number;
   mid: string;
   status: MessageStatus;
   isMarked: boolean;
