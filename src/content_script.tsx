@@ -1,46 +1,6 @@
-import {
-  BackgroundMessage,
-  BgMsgChangeRoomStatus,
-  BgMsgChatworkMessage,
-  BgMsgChatworkRooms,
-  MessageUser,
-} from "./interface";
+import { BackgroundMessage, MessageUser } from "./interface";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 
-const checkNewNotification = async () => {
-  const sendMessage: BackgroundMessage = { requestKind: "getChatworkRoom" };
-  chrome.runtime.sendMessage<BackgroundMessage, ChatworkRoomTable[] | undefined>(
-    sendMessage,
-    (response) => {
-      if (response === undefined || response.length === 0) return;
-      //状態が変わっているRoomをdiffListに格納する
-      const diffList: ChatworkRoomTable[] = [];
-      for (let i = 0; i < document.getElementById("RoomList")!.children!.length; i++) {
-        let tabElements = document.getElementById("RoomList")!.children![i];
-        for (let n = 0; n < tabElements.children!.length; n++) {
-          let roomTabElement = tabElements.children![n];
-          const rid = roomTabElement!.getAttribute("data-rid");
-          const roomName = roomTabElement!.getAttribute("aria-label");
-          const unread = roomTabElement.getElementsByClassName("_unreadBadge").length !== 0;
-          if (response.filter((room) => room.rid === rid).length === 0) continue;
-          const targetRoom = response.filter((room) => room.rid === rid)[0];
-          if (unread && targetRoom.status !== "unread") {
-            diffList.push(targetRoom);
-            diffList[diffList.length - 1].status = "unread";
-          }
-        }
-      }
-      //diffListをDBに適用する
-      chrome.runtime.sendMessage<BgMsgChatworkRooms, any>(
-        {
-          requestKind: "putChatworkRoom",
-          data: diffList,
-        },
-        (res) => {}
-      );
-    }
-  );
-};
 type GetMessixUserMessageUser = () => MessageUser | undefined;
 const getMessixUserMessageUser: GetMessixUserMessageUser = () => {
   const roomMemberAreaElement = document.getElementById("roomMemberArea");
@@ -89,10 +49,13 @@ const getMessages: GetMessages = () => {
       .getElementsByClassName("_timeStamp")[0]
       .getAttribute("data-tm");
     if (content === null || unixTime === null) continue;
+    //一時的にエラーを無くすために適当な値が入っている
     const message: ChatworkMessageTable = {
-      rid: rid,
-      name: currentUser?.name!,
-      iconUrl: currentUser?.iconUrl,
+      mid: "",
+      status: "normal",
+      isMarked: false,
+      userName: currentUser?.name!,
+      userIcon: currentUser?.iconUrl!,
       content: content,
       createAt: new Date(parseInt(unixTime) * 1000),
     };
@@ -101,62 +64,7 @@ const getMessages: GetMessages = () => {
 
   return rtnArray;
 };
-const checkReply = () => {
-  if (location.href.indexOf("chatwork.com") !== -1 && location.href.indexOf("rid") !== -1) {
-    const rid = location.href.split("rid")[1];
-    const messages = getMessages();
-    for (let i = 0; i < messages.length; i++) {
-      console.log(`${messages[i].name}:${messages[i].content}`);
-    }
-    const latestMessage = messages[messages.length - 1];
-    //最後のMessageがユーザー自身のものか検証
 
-    const messixUser = getMessixUserMessageUser();
-    console.log(`${latestMessage.name}:${messixUser?.name}`);
-    console.log(`${latestMessage.iconUrl}:${messixUser?.iconUrl}`);
-    if (latestMessage.name === messixUser?.name && latestMessage.iconUrl === messixUser.iconUrl) {
-      chrome.runtime.sendMessage<BgMsgChangeRoomStatus, boolean>({
-        requestKind: "changeRoomStatus",
-        rid: rid,
-        status: "normal",
-      });
-    }
-
-    //最後のMessageをDBに格納
-    const sendMessage: BgMsgChatworkMessage = {
-      requestKind: "getLatestChatworkMessage",
-      targetRid: rid,
-    };
-    chrome.runtime.sendMessage<BgMsgChatworkMessage, ChatworkMessageTable | undefined>(
-      sendMessage,
-      (res) => {
-        console.log(res);
-        if (!res) {
-          chrome.runtime.sendMessage<BgMsgChatworkMessage, boolean>(
-            {
-              requestKind: "postChatworkMessage",
-              data: latestMessage,
-            },
-            (result) => {}
-          );
-        } else if (res.createAt !== latestMessage.createAt) {
-          chrome.runtime.sendMessage<BgMsgChatworkMessage, boolean>(
-            {
-              requestKind: "postChatworkMessage",
-              data: latestMessage,
-            },
-            (result) => {}
-          );
-        }
-      }
-    );
-  }
-};
-const check = () => {
-  //未読メッセージの確認
-  checkNewNotification();
-  //未返信メッセージ確認
-  checkReply();
-};
+const check = () => {};
 let loop: NodeJS.Timer;
 if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 100);

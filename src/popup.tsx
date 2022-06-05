@@ -12,8 +12,10 @@ import { changeBadgeText } from "./util";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
-  const unreads = useLiveQuery(() => db.chatworkRoom.where("status").equals("unread").toArray());
-  const unreplys = useLiveQuery(() => db.chatworkRoom.where("status").equals("unreply").toArray());
+  //const unreads = useLiveQuery(() => db.chatworkRoom.where("status").equals("unread").toArray());
+  const unreads: ChatworkRoomTable[] = []; //一時的な対応
+  const unreplys: ChatworkRoomTable[] = [];
+  //const unreplys = useLiveQuery(() => db.chatworkRoom.where("status").equals("unreply").toArray());
   const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
   const [lastChangedRoom, setLastChangedRoom] = useState<ChatworkRoomTable>();
@@ -38,7 +40,7 @@ const Popup = () => {
       name: unmanagedRoom!.name,
       rid: unmanagedRoom!.rid,
       isActive: true,
-      status: "normal",
+      unreadCount: 0,
     });
     setUnmanagedRoom(undefined);
   };
