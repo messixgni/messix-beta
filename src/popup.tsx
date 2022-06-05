@@ -109,9 +109,17 @@ const Popup = () => {
                 ) : (
                   <>
                     {isUnreadView ? (
-                      <a href="https://www.chatwork.com" target="_blank">
-                        {`未読メッセージが${unreads.length}件あります`}
-                      </a>
+                      <>
+                        {unreads.map((unread) => (
+                          <a
+                            href={`https://chatwork.com#!rid${unread.rid}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {unread.name}
+                          </a>
+                        ))}
+                      </>
                     ) : (
                       <>
                         {unreplys.map((unreply) => (
