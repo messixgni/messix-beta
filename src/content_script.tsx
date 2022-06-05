@@ -1,4 +1,4 @@
-import { BackgroundMessage, MessageUser } from "./interface";
+import { BackgroundMessage, MessageUser, unreadRoom } from "./interface";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 
 type GetMessixUserMessageUser = () => MessageUser | undefined;
@@ -65,6 +65,34 @@ const getMessages: GetMessages = () => {
   return rtnArray;
 };
 
-const check = () => {};
+const getUnreadMessages = () => {
+  const roomListWrapper = document.getElementById('RoomList');
+  const NodeList = roomListWrapper?.querySelectorAll('div#RoomList > ul');
+  if (NodeList === undefined)
+    return;
+  const roomsList = NodeList[0];
+  const rooms = roomsList?.querySelectorAll('li');
+  // const unreadRoomsList: unreadRoom[]
+  const Message: BackgroundMessage = {
+    requestKind: "setChatworkRoomUnreads",
+    unreadRooms: [],
+  };
+  rooms?.forEach((elem) => {
+    if (elem.querySelector('li')) {
+      const rid = elem.getAttribute("data-rid");
+      const unreadCount = parseInt(elem.querySelector("li")?.innerText!);
+      const unreadRoom: unreadRoom = {
+        'rid': rid!,
+        'unreadCount': unreadCount!
+      };
+      Message.unreadRooms.push(unreadRoom);
+    }
+  })
+  chrome.runtime.sendMessage(Message);
+}
+
+const check = () => {
+  getUnreadMessages();
+};
 let loop: NodeJS.Timer;
 if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 100);
