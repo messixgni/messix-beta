@@ -8,8 +8,8 @@ const updateTableUnreadCount = async (elem:UnreadRoom) => {
   await db.chatworkRoom.update(rowMatchingRid[0].id, {unreadCount: elem.unreadCount});
 }
 
-const changeUnreadCount = async (SetChatworkRoomUnreadsBM: SetChatworkRoomUnreadsBM) => {
-  SetChatworkRoomUnreadsBM.unreadRooms.forEach((elem) => {
+const changeUnreadCount = async (setChatworkRoomUnreadsBM: SetChatworkRoomUnreadsBM) => {
+  setChatworkRoomUnreadsBM.unreadRooms.forEach((elem) => {
     updateTableUnreadCount(elem);
   });
 };

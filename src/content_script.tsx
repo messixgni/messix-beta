@@ -80,11 +80,11 @@ const getUnreadMessages = () => {
     if (elem.querySelector('li')) {
       const rid = elem.getAttribute("data-rid");
       const unreadCount = parseInt(elem.querySelector("li")?.innerText!);
-      const UnreadRoom: UnreadRoom = {
+      const unreadRoom: UnreadRoom = {
         'rid': rid!,
         'unreadCount': unreadCount!
       };
-      Message.unreadRooms.push(UnreadRoom);
+      Message.unreadRooms.push(unreadRoom);
     }
   })
   chrome.runtime.sendMessage(Message);
