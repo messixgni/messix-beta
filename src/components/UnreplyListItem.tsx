@@ -53,9 +53,9 @@ const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProp
     }
   };
   const changeToNormal = () => {
-    chatworkRoom.status = "normal";
+    /*chatworkRoom.status = "normal";
     db.chatworkRoom.put(chatworkRoom);
-    onChangeToNormal(chatworkRoom);
+    onChangeToNormal(chatworkRoom);*/
   };
   return (
     <div className="d-flex flex-row align-items-stretch">
