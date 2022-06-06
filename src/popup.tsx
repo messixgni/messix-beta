@@ -7,14 +7,14 @@ import { useLiveQuery } from "dexie-react-hooks";
 import UnreplyListItem from "./components/UnreplyListItem";
 import SettingPage from "./components/SettignPage";
 import ForceCheckedToast from "./components/ForceCheckedToast";
-import { ChatworkRoomTable } from "./interface/dbTable";
+import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 import { changeBadgeText } from "./util";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
-  const unreads = useLiveQuery(() => db.chatworkRoom.where("status").equals("unread").toArray());
-  const unreplys = useLiveQuery(() => db.chatworkRoom.where("status").equals("unreply").toArray());
-  const [isUnreadView, setIsUnreadView] = useState<boolean>(false);
+  const unreads = useLiveQuery(() => db.chatworkRoom.where("unreadCount").above(0).toArray());
+  const unreplys = useLiveQuery(() => db.chatworkMessage.where("status").equals("unreply").toArray());
+  const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
   const [lastChangedRoom, setLastChangedRoom] = useState<ChatworkRoomTable>();
   useEffect(() => {
@@ -42,7 +42,7 @@ const Popup = () => {
     });
     setUnmanagedRoom(undefined);
   };
-  const getCountBadge = (datas: ChatworkRoom[] | undefined) => {
+  const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {
     if (datas) {
       if (datas.length === 0) return <></>;
       return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
