@@ -7,15 +7,13 @@ import { useLiveQuery } from "dexie-react-hooks";
 import UnreplyListItem from "./components/UnreplyListItem";
 import SettingPage from "./components/SettignPage";
 import ForceCheckedToast from "./components/ForceCheckedToast";
-import { ChatworkRoomTable } from "./interface/dbTable";
+import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 import { changeBadgeText } from "./util";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
-  //const unreads = useLiveQuery(() => db.chatworkRoom.where("status").equals("unread").toArray());
-  const unreads: ChatworkRoomTable[] = []; //一時的な対応
-  const unreplys: ChatworkRoomTable[] = [];
-  //const unreplys = useLiveQuery(() => db.chatworkRoom.where("status").equals("unreply").toArray());
+  const unreads = useLiveQuery(() => db.chatworkRoom.where("unreadCount").above(0).toArray());
+  const unreplys = useLiveQuery(() => db.chatworkMessage.where("status").equals("unreply").toArray());
   const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
   const [lastChangedRoom, setLastChangedRoom] = useState<ChatworkRoomTable>();
@@ -44,103 +42,127 @@ const Popup = () => {
     });
     setUnmanagedRoom(undefined);
   };
+  const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {
+    if (datas) {
+      if (datas.length === 0) return <></>;
+      return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
+    }
+    return <></>;
+  };
   return (
-    <div style={{ width: "600px" }}>
-      <Container fluid>
-        <Row style={{ height: "50px", backgroundColor: "lightgray" }}>
+    <div className="d-flex flex-row" style={{ width: "600px" }}>
+      <div className="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light">
+        <a
+          href="/"
+          className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
+        >
+          <img src="messix-logo.png" width="103" height="41" />
+          <span className="fs-4"></span>
+        </a>
+        <hr />
+        <ul className="nav nav-pills flex-column mb-auto">
+          <li className="nav-item">
+            <a
+              href="#"
+              className={isUnreadView ? "nav-link active" : "nav-link link-dark"}
+              aria-current="page"
+              onClick={() => setIsUnreadView(true)}
+            >
+              <img src="unread.png" width="16" height="16" /> 未読 {getCountBadge(unreads)}
+            </a>
+          </li>
+          <li className="nav-item">
+            <a
+              href="#"
+              className={!isUnreadView ? "nav-link active" : "nav-link link-dark"}
+              aria-current="page"
+              onClick={() => setIsUnreadView(false)}
+            >
+              <img src="unreply.png" width="16" height="16" /> 未返信 {getCountBadge(unreplys)}
+            </a>
+          </li>
+        </ul>
+        <div className="sidecar__btm align-items-end">
+          <hr />
+          <a
+            href="#"
+            className="d-flex link-dark text-decoration-none"
+            onClick={() => {
+              setIsSettingView(!isSettingView);
+            }}
+          >
+            <img src="settings.png" alt="" width="16" height="16" className="me-2" />{" "}
+            {isSettingView ? "戻る" : "設定"}
+          </a>
+        </div>
+      </div>
+      <div className="MainContents">
+        {unmanagedRoom ? (
+          <div
+            className="managementNotification alert alert-info alert-dismissible fade show"
+            role="alert"
+          >
+            <p>
+              『<strong>{unmanagedRoom.name}</strong>』のチャットを通知管理しますか？
+            </p>
+            <Button className="btn-sm btn-primary" onClick={onClickAddManageBtn}>
+              はい
+            </Button>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+              onClick={() => {
+                setUnmanagedRoom(undefined);
+              }}
+            ></button>
+          </div>
+        ) : (
+          <></>
+        )}
+        <div>
           {isSettingView ? (
-            <></>
+            <SettingPage />
           ) : (
             <>
-              {unmanagedRoom ? (
+              {isUnreadView ? (
                 <>
-                  <Col xs={10} className="d-flex align-items-center">
-                    <p>『{unmanagedRoom.name}』のチャットを通知管理しますか？</p>
-                  </Col>
-                  <Col xs={2} className="d-flex align-items-center">
-                    <Button onClick={onClickAddManageBtn}>はい</Button>
-                  </Col>
+                  {unreads ? (
+                    <>
+                      {unreads.map((unread) => (
+                        <a href={`https://chatwork.com#!rid${unread.rid}`} target="_blank">
+                          {unread.name}
+                        </a>
+                      ))}
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </>
               ) : (
-                <></>
+                <>
+                  {unreplys &&
+                    unreplys.map((unreply) => (
+                      <UnreplyListItem
+                        chatworkRoom={unreply}
+                        onChangeToNormal={(chatworkRoom) => {
+                          setLastChangedRoom(chatworkRoom);
+                        }}
+                      />
+                    ))}
+                </>
               )}
             </>
           )}
-        </Row>
-        <Row style={{ height: "400px" }}>
-          {unreads && unreplys ? (
-            <>
-              <Col xs={2} style={{ borderRight: "2px solid lightgray" }}>
-                <Row>
-                  <div
-                    className={
-                      "d-flex align-items-center popup-tab" +
-                      (isUnreadView ? " popup-tab-selected" : "")
-                    }
-                    onClick={() => setIsUnreadView(true)}
-                  >
-                    <p className="m-0">未読{unreads.length === 0 ? "" : ` [${unreads.length}]`}</p>
-                  </div>
-                </Row>
-                <Row>
-                  <div
-                    className={
-                      "d-flex align-items-center popup-tab" +
-                      (isUnreadView ? "" : " popup-tab-selected")
-                    }
-                    onClick={() => setIsUnreadView(false)}
-                  >
-                    <p className="m-0">未返信</p>
-                  </div>
-                </Row>
-                <Row style={{ height: "300px" }} className="d-flex align-items-end">
-                  <Button
-                    variant="flat"
-                    className="mb-2"
-                    onClick={() => {
-                      setIsSettingView(!isSettingView);
-                    }}
-                  >
-                    {isSettingView ? "戻る" : "設定"}
-                  </Button>
-                </Row>
-              </Col>
-              <Col xs={10}>
-                {isSettingView ? (
-                  <SettingPage />
-                ) : (
-                  <>
-                    {isUnreadView ? (
-                      <a href="https://www.chatwork.com" target="_blank">
-                        {`未読メッセージが${unreads.length}件あります`}
-                      </a>
-                    ) : (
-                      <>
-                        {unreplys.map((unreply) => (
-                          <UnreplyListItem
-                            chatworkRoom={unreply}
-                            onChangeToNormal={(chatworkRoom) => {
-                              setLastChangedRoom(chatworkRoom);
-                            }}
-                          />
-                        ))}
-                      </>
-                    )}
-                  </>
-                )}
-                <ForceCheckedToast
-                  lastChangedRoom={lastChangedRoom}
-                  onClose={() => {
-                    setLastChangedRoom(undefined);
-                  }}
-                />
-              </Col>
-            </>
-          ) : (
-            <></>
-          )}
-        </Row>
-      </Container>
+          <ForceCheckedToast
+            lastChangedRoom={lastChangedRoom}
+            onClose={() => {
+              setLastChangedRoom(undefined);
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
