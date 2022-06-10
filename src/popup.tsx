@@ -12,8 +12,14 @@ import { changeBadgeText } from "./util";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
-  const unreads = useLiveQuery(() => db.chatworkRoom.where("unreadCount").above(0).toArray());
-  const unreplys = useLiveQuery(() => db.chatworkMessage.where("status").equals("unreply").toArray());
+  const unreads = useLiveQuery(
+    () => db.chatworkRoom.toArray()
+    //db.chatworkRoom.where("unreadCount").above(0).toArray()
+  );
+  const unreplys = useLiveQuery(
+    () => db.chatworkMessage.toArray()
+    //db.chatworkMessage.where("status").equals("unreply").toArray()
+  );
   const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
   const [lastChangedRoom, setLastChangedRoom] = useState<ChatworkRoomTable>();
@@ -34,12 +40,12 @@ const Popup = () => {
     changeBadgeText();
   }, []);
   const onClickAddManageBtn = () => {
-    db.chatworkRoom.add({
+    /*db.chatworkRoom.add({
       name: unmanagedRoom!.name,
       rid: unmanagedRoom!.rid,
       isActive: true,
       unreadCount: 0,
-    });
+    });*/
     setUnmanagedRoom(undefined);
   };
   const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {

@@ -50,45 +50,41 @@ const getMessages: GetMessages = () => {
       .getAttribute("data-tm");
     if (content === null || unixTime === null) continue;
     //一時的にエラーを無くすために適当な値が入っている
-    const message: ChatworkMessageTable = {
+    /*const message: ChatworkMessageTable = {
       mid: "",
-      status: "normal",
-      isMarked: false,
-      userName: currentUser?.name!,
-      userIcon: currentUser?.iconUrl!,
+      
       content: content,
       createAt: new Date(parseInt(unixTime) * 1000),
     };
-    rtnArray.push(message);
+    rtnArray.push(message);*/
   }
 
   return rtnArray;
 };
 
 const getUnreadMessages = () => {
-  const roomListWrapper = document.getElementById('RoomList');
-  const NodeList = roomListWrapper?.querySelectorAll('div#RoomList > ul');
-  if (NodeList === undefined)
-    return;
+  const roomListWrapper = document.getElementById("RoomList");
+  const NodeList = roomListWrapper?.querySelectorAll("div#RoomList > ul");
+  if (NodeList === undefined) return;
   const roomsList = NodeList[0];
-  const rooms = roomsList?.querySelectorAll('li');
+  const rooms = roomsList?.querySelectorAll("li");
   const Message: SetChatworkRoomUnreadsBM = {
     requestKind: "setChatworkRoomUnreads",
     unreadRooms: [],
   };
   rooms?.forEach((elem) => {
-    if (elem.querySelector('li')) {
+    if (elem.querySelector("li")) {
       const rid = elem.getAttribute("data-rid");
       const unreadCount = parseInt(elem.querySelector("li")?.innerText!);
       const unreadRoom: UnreadRoom = {
-        'rid': rid!,
-        'unreadCount': unreadCount!
+        rid: rid!,
+        unreadCount: unreadCount!,
       };
       Message.unreadRooms.push(unreadRoom);
     }
-  })
+  });
   chrome.runtime.sendMessage(Message);
-}
+};
 
 const check = () => {
   getUnreadMessages();
