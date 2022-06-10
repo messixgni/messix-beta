@@ -40,25 +40,26 @@ const Popup = () => {
     changeBadgeText();
   }, []);
   const onClickAddManageBtn = () => {
-    try {
-      db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
-        const index = await db.chatworkRoom.add({
-          name: unmanagedRoom!.name,
-          rid: unmanagedRoom!.rid,
-          isActive: true,
-        });
-        const room = await db.chatworkRoom.get(index);
-        await db.chatworkRoomStatus.add({
-          messageId: room?.id!,
-          isMarked: false,
-          isUnread: false,
-        });
+    db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
+      const index = await db.chatworkRoom.add({
+        name: unmanagedRoom!.name,
+        rid: unmanagedRoom!.rid,
+        isActive: true,
       });
-    } catch (err) {
-      console.log("ErrorOnAddChatworkRoom");
-      return;
-    }
-    setUnmanagedRoom(undefined);
+      const room = await db.chatworkRoom.get(index);
+      if (!room) throw "ChatworkRoomNotFound";
+      await db.chatworkRoomStatus.add({
+        messageId: room?.id!,
+        isMarked: false,
+        isUnread: false,
+      });
+    })
+      .then(() => {
+        setUnmanagedRoom(undefined);
+      })
+      .catch((err) => {
+        console.log("ErrorOnAddChatworkRoom");
+      });
   };
   const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {
     if (datas) {
