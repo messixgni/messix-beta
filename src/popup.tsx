@@ -41,14 +41,14 @@ const Popup = () => {
   }, []);
   const onClickAddManageBtn = () => {
     try {
-      db.transaction("rw", db.chatworkRoom, db.chatworkMessageStatus, async () => {
+      db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
         const index = await db.chatworkRoom.add({
           name: unmanagedRoom!.name,
           rid: unmanagedRoom!.rid,
           isActive: true,
         });
         const room = await db.chatworkRoom.get(index);
-        db.chatworkRoomStatus.add({
+        await db.chatworkRoomStatus.add({
           messageId: room?.id!,
           isMarked: false,
           isUnread: false,
