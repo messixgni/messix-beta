@@ -4,13 +4,14 @@ import {
   ChatworkMessageStatusTable,
   ChatworkMessageTable,
   ChatworkRoomTable,
+  ChatworkRoomStatusTable,
   ChatworkUserTable,
 } from "./interface/dbTable";
 const dbName = "messix_mvp2";
 
 export class MessixDB extends Dexie {
   chatworkRoom!: Table<ChatworkRoomTable>;
-  chatworkRoomStatus!: Table<ChatworkMessageStatusTable>;
+  chatworkRoomStatus!: Table<ChatworkRoomStatusTable>;
   chatworkMessage!: Table<ChatworkMessageTable>;
   chatworkUser!: Table<ChatworkUserTable>;
   chatworkMessageStatus!: Table<ChatworkMessageStatusTable>;
