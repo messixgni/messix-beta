@@ -40,13 +40,26 @@ const Popup = () => {
     changeBadgeText();
   }, []);
   const onClickAddManageBtn = () => {
-    /*db.chatworkRoom.add({
-      name: unmanagedRoom!.name,
-      rid: unmanagedRoom!.rid,
-      isActive: true,
-      unreadCount: 0,
-    });*/
-    setUnmanagedRoom(undefined);
+    db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
+      const index = await db.chatworkRoom.add({
+        name: unmanagedRoom!.name,
+        rid: unmanagedRoom!.rid,
+        isActive: true,
+      });
+      const room = await db.chatworkRoom.get(index);
+      if (!room) throw "ChatworkRoomNotFound";
+      await db.chatworkRoomStatus.add({
+        messageId: room?.id!,
+        isMarked: false,
+        isUnread: false,
+      });
+    })
+      .then(() => {
+        setUnmanagedRoom(undefined);
+      })
+      .catch((err) => {
+        console.log("ErrorOnAddChatworkRoom");
+      });
   };
   const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {
     if (datas) {
