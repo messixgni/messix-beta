@@ -49,9 +49,9 @@ const Popup = () => {
       const room = await db.chatworkRoom.get(index);
       if (!room) throw "ChatworkRoomNotFound";
       await db.chatworkRoomStatus.add({
-        messageId: room?.id!,
-        isMarked: false,
-        isUnread: false,
+        roomId: room.id!,
+        unreadCount: 0,
+        hasUnreadMentionedMessage: false,
       });
     })
       .then(() => {
