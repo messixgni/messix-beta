@@ -38,4 +38,5 @@ export type ChatworkMessageData = {
   aid: string;
   userName: string;
   iconUrl: string;
+  replys: string[];
 };

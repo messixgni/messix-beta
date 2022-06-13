@@ -60,6 +60,11 @@ const getMessages: GetMessages = () => {
       .getElementsByClassName("_timeStamp")[0]
       .getAttribute("data-tm");
     if (content === null || unixTime === null) continue;
+    let replys: string[] = [];
+    const replyElements = messageElements[i].getElementsByClassName("_replyMessage");
+    for (let i = 0; i < replyElements.length; i++) {
+      replys.push(replyElements[i].getAttribute("data-mid")!);
+    }
     const message: ChatworkMessageData = {
       mid: mid!,
       rid: rid,
@@ -68,6 +73,7 @@ const getMessages: GetMessages = () => {
       aid: tmpUser?.aid!,
       userName: tmpUser?.name!,
       iconUrl: tmpUser?.iconUrl!,
+      replys: replys,
     };
     rtnArray.push(message);
   }
