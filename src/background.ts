@@ -22,10 +22,11 @@ const changeUnreadCount = async (setChatworkRoomUnreadsBM: SetChatworkRoomUnread
 };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  const backgroundMessage: SetChatworkRoomUnreadsBM = message;
+  const backgroundMessage: BackgroundMessage = message;
   switch (backgroundMessage.requestKind) {
     case "setChatworkRoomUnreads":
-      changeUnreadCount(backgroundMessage);
+      const chatworkRoomUnreadsBM: SetChatworkRoomUnreadsBM = message;
+      changeUnreadCount(chatworkRoomUnreadsBM);
       break;
     case "setChatworkMessage":
       const chatworkMessageBM: SetChatworkMessageBM = message;
