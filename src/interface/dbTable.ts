@@ -18,7 +18,7 @@ export interface ChatworkMessageTable {
   id?: number;
   roomId?: number;
   mid: string;
-  user: ChatworkUserTable;
+  userId: number;
   content: string;
   createAt: Date;
 }

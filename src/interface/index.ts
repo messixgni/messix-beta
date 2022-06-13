@@ -11,8 +11,12 @@ export type SetChatworkRoomUnreadsBM = BackgroundMessage & {
   unreadRooms: UnreadRoom[];
 };
 
+export type SetChatworkMessageBM = BackgroundMessage & {
+  messages: ChatworkMessageData[];
+};
+
 export type BackgroundMessage = {
-  requestKind: "setChatworkRoomUnreads";
+  requestKind: "setChatworkRoomUnreads" | "setChatworkMessage";
 };
 
 export type ChatworkRoom = {
@@ -21,6 +25,17 @@ export type ChatworkRoom = {
 };
 
 export type MessageUser = {
+  aid?: string;
   name: string;
   iconUrl?: string;
+};
+
+export type ChatworkMessageData = {
+  mid: string;
+  rid: string;
+  content: string;
+  createAt: Date;
+  aid: string;
+  userName: string;
+  iconUrl: string;
 };
