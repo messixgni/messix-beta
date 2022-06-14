@@ -23,6 +23,9 @@ const changeUnreadCount = async (setChatworkRoomUnreadsBM: SetChatworkRoomUnread
 };
 
 const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
+  if (messages.length === 0) return;
+  const targetRoom = await db.chatworkRoom.where("rid").equals(messages[0].rid).first();
+  if (!targetRoom) return;
   messages.forEach(async (message) => {
     const queryResult = await db.chatworkMessage.where("mid").equals(message.mid).first();
     if (queryResult) return;
@@ -33,6 +36,8 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
       db.chatworkUser,
       db.chatworkMessageReply,
       async () => {
+        //投稿したての正しくないmidのメッセージを排除する
+        if (message.mid.length < 4) return;
         //対象UserIdの取得
         const user = await db.chatworkUser.where("aid").equals(message.aid).first();
         let userId = -1;
@@ -57,6 +62,7 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
             //テキスト内容が違う
             const result = await db.chatworkMessage.put({
               id: currentMessage.id,
+              roomId: targetRoom.id,
               mid: currentMessage.mid,
               userId: currentMessage.userId,
               content: message.content,
@@ -67,6 +73,7 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
           //DBに無い（新規登録）
           const newMessageIndex = await db.chatworkMessage.add({
             mid: message.mid,
+            roomId: targetRoom.id,
             userId: userId,
             content: message.content,
             createAt: message.createAt,
@@ -85,11 +92,13 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
           //DBへの登録
           const replyTargetMessage = await db.chatworkMessage.where("mid").equals(replyMid).first();
           if (!replyTargetMessage) return;
-          const currentMessageReply = await db.chatworkMessageReply
-            .where(["replyTargetMessageId", "replyMessageId"])
-            .equals([replyTargetMessage.id!, messageId])
-            .first();
-          if (!currentMessageReply) {
+          const currentMessageReplys = (
+            await db.chatworkMessageReply
+              .where("replyTargetMessageId")
+              .equals(replyTargetMessage.id!)
+              .toArray()
+          ).filter((msgReply) => msgReply.replyMessageId === messageId);
+          if (currentMessageReplys.length === 0) {
             //存在しないため新規登録
             const newMessageReply = await db.chatworkMessageReply.add({
               replyTargetMessageId: replyTargetMessage.id!,
@@ -97,7 +106,6 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
             });
           }
           //未返信自動解決
-          if (!message.isMentioned) return;
           const replyTargetMessageStatus = await db.chatworkMessageStatus
             .where("messageId")
             .equals(replyTargetMessage.id!)
@@ -113,7 +121,13 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
           }
         });
       }
-    );
+    )
+      .then(() => {
+        console.log("done");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   });
 };
 
