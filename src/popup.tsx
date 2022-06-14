@@ -61,10 +61,56 @@ const Popup = () => {
         console.log("ErrorOnAddChatworkRoom");
       });
   };
+  const implementsChatworkRoom = (arg: any): arg is ChatworkRoomTable[] => {
+    return (
+      arg !== null &&
+      typeof Array.isArray(arg) &&
+      arg.length !== 0 &&
+      typeof arg[0].rid === "string"
+    );
+  };
   const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {
+    console.log("datas");
+    console.log(datas);
     if (datas) {
       if (datas.length === 0) return <></>;
-      return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
+      if (implementsChatworkRoom(datas)) {
+        console.log("yes")
+        const display = async () => {
+          let totalUnreadCount = 0;
+          await new Promise(async (resolve) => {
+            for (const elem of datas) {
+              totalUnreadCount += await db.transaction(
+                "r",
+                db.chatworkRoomStatus,
+                db.chatworkRoom,
+                async () => {
+                  const roomRowMatching = await db.chatworkRoom.where("rid").equals(elem.rid).toArray();
+                  if (roomRowMatching.length === 0 || roomRowMatching[0].id === undefined) {
+                    console.log("NoMatchingRoom");
+                    return 0;
+                  }
+                  const statusRowMatching = await db.chatworkRoomStatus
+                    .where("roomId")
+                    .equals(roomRowMatching[0].id)
+                    .toArray();
+                  return statusRowMatching[0].unreadCount ? statusRowMatching[0].unreadCount : 0;
+                }
+              );
+            }
+            console.log("totalUnreadCount")
+            console.log(totalUnreadCount)
+            resolve(totalUnreadCount);
+          })
+          return totalUnreadCount;
+        }
+        console.log("excute display()")
+        console.log(display());
+        // return <span className="badge rounded-pill bg-danger">{}</span>;
+      } else {
+        console.log("no");
+        return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
+      }
     }
     return <></>;
   };
@@ -97,7 +143,7 @@ const Popup = () => {
               aria-current="page"
               onClick={() => setIsUnreadView(false)}
             >
-              <img src="unreply.png" width="16" height="16" /> 未返信 {getCountBadge(unreplys)}
+              <img src="unreply.png" width="16" height="16" /> 未返信 {}
             </a>
           </li>
         </ul>
@@ -150,9 +196,18 @@ const Popup = () => {
                   {unreads ? (
                     <>
                       {unreads.map((unread) => (
-                        <a href={`https://chatwork.com#!rid${unread.rid}`} target="_blank">
-                          {unread.name}
-                        </a>
+                        <div className="d-flex align-items-center position-relative">
+                          <a
+                            className="text-decoration-none text-reset stretched-link m-2"
+                            href={`https://chatwork.com#!rid${unread.rid}`}
+                            target="_blank"
+                          >
+                            {unread.name}
+                          </a>
+                          <span className="unreadToMessage badge bg-secondary rounded-circle position-relative">
+                            {/* {getRoomCountBadge(unread)} */}
+                          </span>
+                        </div>
                       ))}
                     </>
                   ) : (

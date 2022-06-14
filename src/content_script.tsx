@@ -52,7 +52,7 @@ const getMessages: GetMessages = () => {
     //一時的にエラーを無くすために適当な値が入っている
     /*const message: ChatworkMessageTable = {
       mid: "",
-      
+
       content: content,
       createAt: new Date(parseInt(unixTime) * 1000),
     };
@@ -63,22 +63,25 @@ const getMessages: GetMessages = () => {
 };
 
 const getUnreadMessages = () => {
-  const roomListWrapper = document.getElementById("RoomList");
-  const NodeList = roomListWrapper?.querySelectorAll("div#RoomList > ul");
-  if (NodeList === undefined) return;
-  const roomsList = NodeList[0];
-  const rooms = roomsList?.querySelectorAll("li");
+  const roomList = document.querySelectorAll("div#RoomList > ul > li");
+  if (roomList === undefined || roomList.length === 0) return;
   const Message: SetChatworkRoomUnreadsBM = {
     requestKind: "setChatworkRoomUnreads",
     unreadRooms: [],
   };
-  rooms?.forEach((elem) => {
+  roomList.forEach((elem) => {
+    const rid = elem.getAttribute("data-rid");
     if (elem.querySelector("li")) {
-      const rid = elem.getAttribute("data-rid");
       const unreadCount = parseInt(elem.querySelector("li")?.innerText!);
       const unreadRoom: UnreadRoom = {
         rid: rid!,
         unreadCount: unreadCount!,
+      };
+      Message.unreadRooms.push(unreadRoom);
+    } else {
+      const unreadRoom: UnreadRoom = {
+        rid: rid!,
+        unreadCount: 0,
       };
       Message.unreadRooms.push(unreadRoom);
     }
