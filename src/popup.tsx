@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { Container, Col, Row, Button } from "react-bootstrap";
-import { ChatworkRoom } from "./interface";
+import { ChatworkRoom, UnreadInclusiveStatus } from "./interface";
 import { db } from "./db";
 import { useLiveQuery } from "dexie-react-hooks";
 import UnreplyListItem from "./components/UnreplyListItem";
@@ -12,10 +12,25 @@ import { changeBadgeText } from "./util";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
-  const unreads = useLiveQuery(
-    () => db.chatworkRoom.toArray()
-    //db.chatworkRoom.where("unreadCount").above(0).toArray()
-  );
+  const unreads = useLiveQuery(async () => {
+    const allManagedRooms = await db.chatworkRoom.toArray();
+    const activeRooms = allManagedRooms.filter((elem) => elem.isActive === true);
+    const roomStatus = await db.chatworkRoomStatus.bulkGet(activeRooms.map((room) => room.id!));
+    const val: UnreadInclusiveStatus[] = [];
+    activeRooms.forEach((room) => {
+      const object: UnreadInclusiveStatus = {
+        id: room.id!,
+        rid: room.rid,
+        name: room.name,
+        unreadCount: roomStatus.find((status) => status?.roomId === room.id)?.unreadCount!,
+        hasUnreadMentionedMessage: roomStatus.find((status) => status?.roomId === room.id)
+          ?.hasUnreadMentionedMessage!,
+      };
+      val.push(object);
+    });
+    return val;
+  });
+  console.log(unreads);
   const unreplys = useLiveQuery(
     () => db.chatworkMessage.toArray()
     //db.chatworkMessage.where("status").equals("unreply").toArray()
@@ -61,54 +76,44 @@ const Popup = () => {
         console.log("ErrorOnAddChatworkRoom");
       });
   };
-  const implementsChatworkRoom = (arg: any): arg is ChatworkRoomTable[] => {
+  const implementsUnreadInclusiveStatusArray = (arg: any): arg is UnreadInclusiveStatus[] => {
     return (
       arg !== null &&
       typeof Array.isArray(arg) &&
       arg.length !== 0 &&
-      typeof arg[0].rid === "string"
+      typeof arg[0].unreadCount === "number"
     );
   };
-  const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {
+  const implementsUnreadInclusiveStatus = (arg: any): arg is UnreadInclusiveStatus => {
+    return arg !== null && typeof arg.unreadCount === "number";
+  };
+  const getCountBadge = (
+    datas: UnreadInclusiveStatus | UnreadInclusiveStatus[] | ChatworkMessageTable[] | undefined
+  ) => {
     console.log("datas");
     console.log(datas);
     if (datas) {
-      if (datas.length === 0) return <></>;
-      if (implementsChatworkRoom(datas)) {
-        console.log("yes")
-        const display = async () => {
-          let totalUnreadCount = 0;
-          await new Promise(async (resolve) => {
-            for (const elem of datas) {
-              totalUnreadCount += await db.transaction(
-                "r",
-                db.chatworkRoomStatus,
-                db.chatworkRoom,
-                async () => {
-                  const roomRowMatching = await db.chatworkRoom.where("rid").equals(elem.rid).toArray();
-                  if (roomRowMatching.length === 0 || roomRowMatching[0].id === undefined) {
-                    console.log("NoMatchingRoom");
-                    return 0;
-                  }
-                  const statusRowMatching = await db.chatworkRoomStatus
-                    .where("roomId")
-                    .equals(roomRowMatching[0].id)
-                    .toArray();
-                  return statusRowMatching[0].unreadCount ? statusRowMatching[0].unreadCount : 0;
-                }
-              );
-            }
-            console.log("totalUnreadCount")
-            console.log(totalUnreadCount)
-            resolve(totalUnreadCount);
-          })
-          return totalUnreadCount;
-        }
-        console.log("excute display()")
-        console.log(display());
-        // return <span className="badge rounded-pill bg-danger">{}</span>;
+      if (implementsUnreadInclusiveStatus(datas)) {
+        const invisible = datas.unreadCount ? "" : "invisible"
+        console.log("datas.hasUnreadMentionedMessage");
+        const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
+        return (
+          <span className={"badge bg-secondary rounded-circle position-relative " + invisible + " " + unreadToMessage} >
+            {datas.unreadCount}
+          </span>
+        );
+      } else if (datas.length === 0) return <></>;
+      if (implementsUnreadInclusiveStatusArray(datas)) {
+        const val = datas.reduce((sum, elem) => {
+          return sum + elem.unreadCount;
+        }, 0);
+        const invisible = val ? "" : "invisible"
+        return (
+          <span className={"badge rounded-pill bg-danger " + invisible}>
+            {val}
+          </span>
+        );
       } else {
-        console.log("no");
         return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
       }
     }
@@ -143,7 +148,7 @@ const Popup = () => {
               aria-current="page"
               onClick={() => setIsUnreadView(false)}
             >
-              <img src="unreply.png" width="16" height="16" /> 未返信 {}
+              <img src="unreply.png" width="16" height="16" /> 未返信 {getCountBadge(unreplys)}
             </a>
           </li>
         </ul>
@@ -161,7 +166,7 @@ const Popup = () => {
           </a>
         </div>
       </div>
-      <div className="MainContents">
+      <div className="MainContents w-100">
         {unmanagedRoom ? (
           <div
             className="managementNotification alert alert-info alert-dismissible fade show"
@@ -204,9 +209,7 @@ const Popup = () => {
                           >
                             {unread.name}
                           </a>
-                          <span className="unreadToMessage badge bg-secondary rounded-circle position-relative">
-                            {/* {getRoomCountBadge(unread)} */}
-                          </span>
+                          {getCountBadge(unread)}
                         </div>
                       ))}
                     </>

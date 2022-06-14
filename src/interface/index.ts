@@ -7,9 +7,18 @@ export type UnreadRoom = {
   unreadCount: number;
 };
 
-export type SetChatworkRoomUnreadsBM = BackgroundMessage & {
-  unreadRooms: UnreadRoom[];
+export type UnreadRoomStatus = UnreadRoom & {
+  hasUnreadMentionedMessage: boolean;
 };
+
+export type UnreadInclusiveStatus = ChatworkRoom & UnreadRoomStatus & UnreadRoom & {
+  id: number;
+}
+
+export type SetChatworkRoomUnreadsBM = BackgroundMessage & {
+  unreadRooms: UnreadRoomStatus[];
+};
+
 
 export type BackgroundMessage = {
   requestKind: "setChatworkRoomUnreads";

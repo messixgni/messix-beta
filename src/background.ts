@@ -1,12 +1,12 @@
 import { db } from "./db";
-import { BackgroundMessage, SetChatworkRoomUnreadsBM, UnreadRoom } from "./interface";
+import { BackgroundMessage, SetChatworkRoomUnreadsBM, UnreadRoomStatus } from "./interface";
 import { changeBadgeText } from "./util";
 
-const updateTableUnreadCount = async (elem: UnreadRoom) => {
+const updateTableUnreadCount = async (elem: UnreadRoomStatus) => {
   db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
     const roomRowMatching = await db.chatworkRoom.where("rid").equals(elem.rid).toArray();
     if (roomRowMatching.length === 0 || roomRowMatching[0].id === undefined) {
-      console.log("NoMatchingRoom");
+      console.log("NoMatchingRoom(updateTableUnreadCount)");
       return;
     }
     const statusRowMatching = await db.chatworkRoomStatus
@@ -17,7 +17,7 @@ const updateTableUnreadCount = async (elem: UnreadRoom) => {
       await db.chatworkRoomStatus.put({
         roomId: roomRowMatching[0].id,
         unreadCount: elem.unreadCount,
-        hasUnreadMentionedMessage: false,
+        hasUnreadMentionedMessage: elem.hasUnreadMentionedMessage,
       });
     } else if (statusRowMatching.length >= 2) {
       throw new Error("there is duplication of the same rid room.");
@@ -25,20 +25,20 @@ const updateTableUnreadCount = async (elem: UnreadRoom) => {
       await db.chatworkRoomStatus.update(statusRowMatching[0].id!, {
         roomId: roomRowMatching[0].id,
         unreadCount: elem.unreadCount,
-        hasUnreadMentionedMessage: false,
+        hasUnreadMentionedMessage: elem.hasUnreadMentionedMessage,
       });
     }
   })
     .then(() => {
-      console.log("Transaction committed");
+      console.log("Transaction committed(updateTableUnreadCount)");
     })
     .catch((err) => {
       console.error(err.stack);
     });
 };
 
-const changeUnreadCount = async (setChatworkRoomUnreadsBM: SetChatworkRoomUnreadsBM) => {
-  setChatworkRoomUnreadsBM.unreadRooms.forEach((elem) => {
+const changeUnreadCount = async (backgroundMessage: SetChatworkRoomUnreadsBM) => {
+  backgroundMessage.unreadRooms.forEach((elem) => {
     updateTableUnreadCount(elem);
   });
 };
@@ -47,7 +47,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const backgroundMessage: SetChatworkRoomUnreadsBM = message;
   switch (backgroundMessage.requestKind) {
     case "setChatworkRoomUnreads":
-      console.log(backgroundMessage);
       changeUnreadCount(backgroundMessage);
       break;
   }

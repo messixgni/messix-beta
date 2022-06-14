@@ -1,4 +1,4 @@
-import { SetChatworkRoomUnreadsBM, MessageUser, UnreadRoom } from "./interface";
+import { SetChatworkRoomUnreadsBM, MessageUser, UnreadRoomStatus } from "./interface";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 
 type GetMessixUserMessageUser = () => MessageUser | undefined;
@@ -71,17 +71,22 @@ const getUnreadMessages = () => {
   };
   roomList.forEach((elem) => {
     const rid = elem.getAttribute("data-rid");
-    if (elem.querySelector("li")) {
-      const unreadCount = parseInt(elem.querySelector("li")?.innerText!);
-      const unreadRoom: UnreadRoom = {
+    if (elem.querySelectorAll("li > span").length != 0) {
+      const style = getComputedStyle(elem.querySelectorAll("li")[0]!, "::after").backgroundColor;
+      const hasUnreadMentionedMessage = style.match(/rgba/) ? false : true;
+      const unreadCount = parseInt(elem.querySelectorAll("li > span")[0].innerHTML);
+      console.log(unreadCount);
+      const unreadRoom: UnreadRoomStatus = {
         rid: rid!,
-        unreadCount: unreadCount!,
+        unreadCount: unreadCount,
+        hasUnreadMentionedMessage: hasUnreadMentionedMessage,
       };
       Message.unreadRooms.push(unreadRoom);
     } else {
-      const unreadRoom: UnreadRoom = {
+      const unreadRoom: UnreadRoomStatus = {
         rid: rid!,
         unreadCount: 0,
+        hasUnreadMentionedMessage: false,
       };
       Message.unreadRooms.push(unreadRoom);
     }
