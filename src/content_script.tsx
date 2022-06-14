@@ -71,9 +71,9 @@ const getMessages: GetMessages = () => {
       rid: rid,
       content: content,
       createAt: new Date(parseInt(unixTime) * 1000),
-      aid: tmpUser?.aid!,
-      userName: tmpUser?.name!,
-      iconUrl: tmpUser?.iconUrl!,
+      aid: currentUser?.aid!,
+      userName: currentUser?.name!,
+      iconUrl: currentUser?.iconUrl!,
       replys: replys,
     };
     rtnArray.push(message);
