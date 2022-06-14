@@ -66,6 +66,7 @@ const getMessages: GetMessages = () => {
       replys.push(replyElements[i].getAttribute("data-mid")!);
     }
     const message: ChatworkMessageData = {
+      isMentioned: messageElements[i].getAttribute("class")?.indexOf("mentioned") !== -1,
       mid: mid!,
       rid: rid,
       content: content,

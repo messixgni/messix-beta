@@ -31,6 +31,7 @@ export type MessageUser = {
 };
 
 export type ChatworkMessageData = {
+  isMentioned: boolean;
   mid: string;
   rid: string;
   content: string;
