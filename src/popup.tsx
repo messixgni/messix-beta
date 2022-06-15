@@ -9,6 +9,7 @@ import SettingPage from "./components/SettignPage";
 import ForceCheckedToast from "./components/ForceCheckedToast";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 import { changeBadgeText } from "./util";
+import { isUnreadInclusiveStatus, isUnreadInclusiveStatusArray } from "./typeguard";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
@@ -76,25 +77,15 @@ const Popup = () => {
         console.log("ErrorOnAddChatworkRoom");
       });
   };
-  const isUnreadInclusiveStatusArray = (arg: any): arg is UnreadInclusiveStatus[] => {
-    return (
-      arg !== null &&
-      typeof Array.isArray(arg) &&
-      arg.length !== 0 &&
-      typeof arg[0].unreadCount === "number"
-    );
-  };
-  const isUnreadInclusiveStatus = (arg: any): arg is UnreadInclusiveStatus => {
-    return arg !== null && typeof arg.unreadCount === "number";
-  };
   const getCountBadge = (
     datas: UnreadInclusiveStatus | UnreadInclusiveStatus[] | ChatworkMessageTable[] | undefined
   ) => {
     console.log("datas");
     console.log(datas);
-    if (!datas) return <></>;
+    if (!datas) return <></>; //datasがundefined
 
     if (isUnreadInclusiveStatus(datas)) {
+      //datasがUnreadInclusiveStatus型
       const invisible = datas.unreadCount ? "" : "invisible";
       console.log("datas.hasUnreadMentionedMessage");
       const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
@@ -112,8 +103,11 @@ const Popup = () => {
       );
     }
 
-    if (datas.length === 0) return <></>;
+    //datasがUnreadInclusiveStatus[] か ChatworkMessageTable[]
+    if (datas.length === 0) return <></>; //datasが空配列
+
     if (isUnreadInclusiveStatusArray(datas)) {
+      //datasがUnreadInclusiveStatus[]
       const val = datas.reduce((sum, elem) => {
         return sum + elem.unreadCount;
       }, 0);
@@ -121,6 +115,7 @@ const Popup = () => {
       return <span className={"badge rounded-pill bg-danger " + invisible}>{val}</span>;
     }
 
+    //datasがChatworkMessageTable[]
     return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
   };
   return (
