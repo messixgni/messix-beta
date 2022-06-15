@@ -1,4 +1,4 @@
-import { SetChatworkRoomUnreadsBM, MessageUser, UnreadRoom } from "./interface";
+import { SetChatworkRoomUnreadsBM, MessageUser, UnreadRoomStatus } from "./interface";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 
 type GetMessixUserMessageUser = () => MessageUser | undefined;
@@ -52,7 +52,7 @@ const getMessages: GetMessages = () => {
     //一時的にエラーを無くすために適当な値が入っている
     /*const message: ChatworkMessageTable = {
       mid: "",
-      
+
       content: content,
       createAt: new Date(parseInt(unixTime) * 1000),
     };
@@ -63,22 +63,30 @@ const getMessages: GetMessages = () => {
 };
 
 const getUnreadMessages = () => {
-  const roomListWrapper = document.getElementById("RoomList");
-  const NodeList = roomListWrapper?.querySelectorAll("div#RoomList > ul");
-  if (NodeList === undefined) return;
-  const roomsList = NodeList[0];
-  const rooms = roomsList?.querySelectorAll("li");
+  const roomList = document.querySelectorAll("div#RoomList > ul > li");
+  if (roomList === undefined || roomList.length === 0) return;
   const Message: SetChatworkRoomUnreadsBM = {
     requestKind: "setChatworkRoomUnreads",
     unreadRooms: [],
   };
-  rooms?.forEach((elem) => {
-    if (elem.querySelector("li")) {
-      const rid = elem.getAttribute("data-rid");
-      const unreadCount = parseInt(elem.querySelector("li")?.innerText!);
-      const unreadRoom: UnreadRoom = {
+  roomList.forEach((elem) => {
+    const rid = elem.getAttribute("data-rid");
+    if (elem.querySelectorAll("li > span").length != 0) {
+      const style = getComputedStyle(elem.querySelectorAll("li")[0]!, "::after").backgroundColor;
+      const hasUnreadMentionedMessage = style.match(/rgba/) ? false : true;
+      const unreadCount = parseInt(elem.querySelectorAll("li > span")[0].innerHTML);
+      console.log(unreadCount);
+      const unreadRoom: UnreadRoomStatus = {
         rid: rid!,
-        unreadCount: unreadCount!,
+        unreadCount: unreadCount,
+        hasUnreadMentionedMessage: hasUnreadMentionedMessage,
+      };
+      Message.unreadRooms.push(unreadRoom);
+    } else {
+      const unreadRoom: UnreadRoomStatus = {
+        rid: rid!,
+        unreadCount: 0,
+        hasUnreadMentionedMessage: false,
       };
       Message.unreadRooms.push(unreadRoom);
     }
