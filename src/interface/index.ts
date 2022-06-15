@@ -11,7 +11,7 @@ export type UnreadRoomStatus = UnreadRoom & {
   hasUnreadMentionedMessage: boolean;
 };
 
-export type UnreadInclusiveStatus = ChatworkRoom & UnreadRoomStatus & UnreadRoom & {
+export type UnreadInclusiveStatus = ChatworkRoom & UnreadRoomStatus & {
   id: number;
 }
 
