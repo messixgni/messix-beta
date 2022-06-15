@@ -76,7 +76,7 @@ const Popup = () => {
         console.log("ErrorOnAddChatworkRoom");
       });
   };
-  const implementsUnreadInclusiveStatusArray = (arg: any): arg is UnreadInclusiveStatus[] => {
+  const isUnreadInclusiveStatusArray = (arg: any): arg is UnreadInclusiveStatus[] => {
     return (
       arg !== null &&
       typeof Array.isArray(arg) &&
@@ -84,7 +84,7 @@ const Popup = () => {
       typeof arg[0].unreadCount === "number"
     );
   };
-  const implementsUnreadInclusiveStatus = (arg: any): arg is UnreadInclusiveStatus => {
+  const isUnreadInclusiveStatus = (arg: any): arg is UnreadInclusiveStatus => {
     return arg !== null && typeof arg.unreadCount === "number";
   };
   const getCountBadge = (
@@ -92,32 +92,36 @@ const Popup = () => {
   ) => {
     console.log("datas");
     console.log(datas);
-    if (datas) {
-      if (implementsUnreadInclusiveStatus(datas)) {
-        const invisible = datas.unreadCount ? "" : "invisible"
-        console.log("datas.hasUnreadMentionedMessage");
-        const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
-        return (
-          <span className={"badge bg-secondary rounded-circle position-relative " + invisible + " " + unreadToMessage} >
-            {datas.unreadCount}
-          </span>
-        );
-      } else if (datas.length === 0) return <></>;
-      if (implementsUnreadInclusiveStatusArray(datas)) {
-        const val = datas.reduce((sum, elem) => {
-          return sum + elem.unreadCount;
-        }, 0);
-        const invisible = val ? "" : "invisible"
-        return (
-          <span className={"badge rounded-pill bg-danger " + invisible}>
-            {val}
-          </span>
-        );
-      } else {
-        return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
-      }
+    if (!datas) return <></>;
+
+    if (isUnreadInclusiveStatus(datas)) {
+      const invisible = datas.unreadCount ? "" : "invisible";
+      console.log("datas.hasUnreadMentionedMessage");
+      const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
+      return (
+        <span
+          className={
+            "badge bg-secondary rounded-circle position-relative " +
+            invisible +
+            " " +
+            unreadToMessage
+          }
+        >
+          {datas.unreadCount}
+        </span>
+      );
     }
-    return <></>;
+
+    if (datas.length === 0) return <></>;
+    if (isUnreadInclusiveStatusArray(datas)) {
+      const val = datas.reduce((sum, elem) => {
+        return sum + elem.unreadCount;
+      }, 0);
+      const invisible = val ? "" : "invisible";
+      return <span className={"badge rounded-pill bg-danger " + invisible}>{val}</span>;
+    }
+
+    return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
   };
   return (
     <div className="d-flex flex-row" style={{ width: "600px" }}>
