@@ -4,18 +4,18 @@ import { changeBadgeText } from "./util";
 
 const updateTableUnreadCount = async (elem: UnreadRoomStatus) => {
   db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
-    const roomRowMatching = await db.chatworkRoom.where("rid").equals(elem.rid).toArray();
-    if (roomRowMatching.length === 0 || roomRowMatching[0].id === undefined) {
+    const roomRowMatching = await db.chatworkRoom.where("rid").equals(elem.rid).first();
+    if (!roomRowMatching) {
       console.log("NoMatchingRoom(updateTableUnreadCount)");
       return;
     }
     const statusRowMatching = await db.chatworkRoomStatus
       .where("roomId")
-      .equals(roomRowMatching[0].id)
+      .equals(roomRowMatching.id!)
       .toArray();
     if (statusRowMatching.length === 0) {
       await db.chatworkRoomStatus.put({
-        roomId: roomRowMatching[0].id,
+        roomId: roomRowMatching.id!,
         unreadCount: elem.unreadCount,
         hasUnreadMentionedMessage: elem.hasUnreadMentionedMessage,
       });
@@ -23,7 +23,7 @@ const updateTableUnreadCount = async (elem: UnreadRoomStatus) => {
       throw new Error("there is duplication of the same rid room.");
     } else {
       await db.chatworkRoomStatus.update(statusRowMatching[0].id!, {
-        roomId: roomRowMatching[0].id,
+        roomId: roomRowMatching.id,
         unreadCount: elem.unreadCount,
         hasUnreadMentionedMessage: elem.hasUnreadMentionedMessage,
       });
