@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { Container, Col, Row, Button } from "react-bootstrap";
-import { ChatworkRoom } from "./interface";
+import { ChatworkRoom, UnreadInclusiveStatus } from "./interface";
 import { db } from "./db";
 import { useLiveQuery } from "dexie-react-hooks";
 import UnreplyListItem from "./components/UnreplyListItem";
@@ -9,13 +9,29 @@ import SettingPage from "./components/SettignPage";
 import ForceCheckedToast from "./components/ForceCheckedToast";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 import { changeBadgeText } from "./util";
+import { isUnreadInclusiveStatus, isUnreadInclusiveStatusArray } from "./typeguard";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
-  const unreads = useLiveQuery(
-    () => db.chatworkRoom.toArray()
-    //db.chatworkRoom.where("unreadCount").above(0).toArray()
-  );
+  const unreads = useLiveQuery(async () => {
+    const allManagedRooms = await db.chatworkRoom.toArray();
+    const activeRooms = allManagedRooms.filter((elem) => elem.isActive === true);
+    const roomStatus = await db.chatworkRoomStatus.bulkGet(activeRooms.map((room) => room.id!));
+    const val: UnreadInclusiveStatus[] = [];
+    activeRooms.forEach((room) => {
+      const object: UnreadInclusiveStatus = {
+        id: room.id!,
+        rid: room.rid,
+        name: room.name,
+        unreadCount: roomStatus.find((status) => status?.roomId === room.id)?.unreadCount!,
+        hasUnreadMentionedMessage: roomStatus.find((status) => status?.roomId === room.id)
+          ?.hasUnreadMentionedMessage!,
+      };
+      val.push(object);
+    });
+    return val;
+  });
+  console.log(unreads);
   const unreplys = useLiveQuery(
     () => db.chatworkMessage.toArray()
     //db.chatworkMessage.where("status").equals("unreply").toArray()
@@ -61,12 +77,46 @@ const Popup = () => {
         console.log("ErrorOnAddChatworkRoom");
       });
   };
-  const getCountBadge = (datas: ChatworkRoomTable[] | ChatworkMessageTable[] | undefined) => {
-    if (datas) {
-      if (datas.length === 0) return <></>;
-      return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
+  const getCountBadge = (
+    datas: UnreadInclusiveStatus | UnreadInclusiveStatus[] | ChatworkMessageTable[] | undefined
+  ) => {
+    console.log("datas");
+    console.log(datas);
+    if (!datas) return <></>; //datasがundefined
+
+    if (isUnreadInclusiveStatus(datas)) {
+      //datasがUnreadInclusiveStatus型
+      const invisible = datas.unreadCount ? "" : "invisible";
+      console.log("datas.hasUnreadMentionedMessage");
+      const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
+      return (
+        <span
+          className={
+            "badge bg-secondary rounded-circle position-relative " +
+            invisible +
+            " " +
+            unreadToMessage
+          }
+        >
+          {datas.unreadCount}
+        </span>
+      );
     }
-    return <></>;
+
+    //datasがUnreadInclusiveStatus[] か ChatworkMessageTable[]
+    if (datas.length === 0) return <></>; //datasが空配列
+
+    if (isUnreadInclusiveStatusArray(datas)) {
+      //datasがUnreadInclusiveStatus[]
+      const val = datas.reduce((sum, elem) => {
+        return sum + elem.unreadCount;
+      }, 0);
+      const invisible = val ? "" : "invisible";
+      return <span className={"badge rounded-pill bg-danger " + invisible}>{val}</span>;
+    }
+
+    //datasがChatworkMessageTable[]
+    return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
   };
   return (
     <div className="d-flex flex-row" style={{ width: "600px" }}>
@@ -115,7 +165,7 @@ const Popup = () => {
           </a>
         </div>
       </div>
-      <div className="MainContents">
+      <div className="MainContents w-100">
         {unmanagedRoom ? (
           <div
             className="managementNotification alert alert-info alert-dismissible fade show"
@@ -150,9 +200,16 @@ const Popup = () => {
                   {unreads ? (
                     <>
                       {unreads.map((unread) => (
-                        <a href={`https://chatwork.com#!rid${unread.rid}`} target="_blank">
-                          {unread.name}
-                        </a>
+                        <div className="d-flex align-items-center position-relative">
+                          <a
+                            className="text-decoration-none text-reset stretched-link m-2"
+                            href={`https://chatwork.com#!rid${unread.rid}`}
+                            target="_blank"
+                          >
+                            {unread.name}
+                          </a>
+                          {getCountBadge(unread)}
+                        </div>
                       ))}
                     </>
                   ) : (
