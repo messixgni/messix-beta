@@ -2,7 +2,7 @@
   "manifest_version": 3,
 
   "name": "Messix β",
-  "description": "『Messix』は様々なメッセージアプリ・ビジネスチャットにおけるやり取りの返事忘れ、対応漏れを防ぐための新しいブラウザ拡張機能サービスです。",
+  "description": "『Messix』はChatworkにおけるやり取りの返事忘れ、対応漏れを防ぐためのブラウザ拡張機能サービスです。",
   "version": "2.0",
 
   "options_ui": {
