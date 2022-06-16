@@ -218,15 +218,15 @@ const Popup = () => {
                 </>
               ) : (
                 <>
-                  {unreplys &&
-                    unreplys.map((unreply) => (
+                  {/* unreplys &&
+                    unreplys.map((unreply) => ({
                       <UnreplyListItem
                         chatworkRoom={unreply}
                         onChangeToNormal={(chatworkRoom) => {
                           setLastChangedRoom(chatworkRoom);
                         }}
                       />
-                    ))}
+                    }))*/}
                 </>
               )}
             </>
