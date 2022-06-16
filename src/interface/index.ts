@@ -11,14 +11,14 @@ export type UnreadRoomStatus = UnreadRoom & {
   hasUnreadMentionedMessage: boolean;
 };
 
-export type UnreadInclusiveStatus = ChatworkRoom & UnreadRoomStatus & {
-  id: number;
-}
+export type UnreadInclusiveStatus = ChatworkRoom &
+  UnreadRoomStatus & {
+    id: number;
+  };
 
 export type SetChatworkRoomUnreadsBM = BackgroundMessage & {
   unreadRooms: UnreadRoomStatus[];
 };
-
 
 export type BackgroundMessage = {
   requestKind: "setChatworkRoomUnreads";

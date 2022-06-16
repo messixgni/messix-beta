@@ -1,4 +1,4 @@
-import { UnreadInclusiveStatus } from "../interface"
+import { UnreadInclusiveStatus } from "../interface";
 
 export const isUnreadInclusiveStatusArray = (arg: any): arg is UnreadInclusiveStatus[] => {
   return (
