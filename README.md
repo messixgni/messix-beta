@@ -43,4 +43,14 @@ type `Ctrl + Shift + B`
 
 現状テストは記載していないが、機能としては残す。
 
-`npx jest` or `npm run test`
+```
+yarn jest
+```
+
+## Code format
+
+Prettier によるコードフォーマットの実行
+
+```
+yarn style
+```
