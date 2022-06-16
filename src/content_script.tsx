@@ -1,5 +1,10 @@
-import { SetChatworkRoomUnreadsBM, MessageUser, UnreadRoomStatus } from "./interface";
-import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
+import {
+  SetChatworkRoomUnreadsBM,
+  MessageUser,
+  UnreadRoomStatus,
+  ChatworkMessageData,
+  SetChatworkMessageBM,
+} from "./interface";
 
 type GetMessixUserMessageUser = () => MessageUser | undefined;
 const getMessixUserMessageUser: GetMessixUserMessageUser = () => {
@@ -18,20 +23,24 @@ const getMessixUserMessageUser: GetMessixUserMessageUser = () => {
 const getMessageUser = (doc: Element) => {
   const speakers = doc.getElementsByClassName("_speaker");
   if (speakers.length === 0) return undefined;
+  const imgParentElement = doc.getElementsByClassName("_avatarClickTip");
+  if (imgParentElement.length === 0) return undefined;
+  const aid = imgParentElement[0].getAttribute("data-aid");
   const imgElements = speakers[0].getElementsByTagName("img");
   if (imgElements.length === 0) return undefined;
   const name = imgElements[0].getAttribute("alt");
   const iconUrl = imgElements[0].getAttribute("src");
   if (name === null || iconUrl === null) return undefined;
   const messageUser: MessageUser = {
+    aid: aid!,
     name: name,
     iconUrl: iconUrl,
   };
   return messageUser;
 };
-type GetMessages = () => ChatworkMessageTable[];
+type GetMessages = () => ChatworkMessageData[];
 const getMessages: GetMessages = () => {
-  let rtnArray: ChatworkMessageTable[] = [];
+  let rtnArray: ChatworkMessageData[] = [];
   let messixUser = getMessixUserMessageUser();
   const rid = location.href.split("rid")[1];
   if (!messixUser) return rtnArray;
@@ -41,6 +50,7 @@ const getMessages: GetMessages = () => {
   let currentUser: MessageUser | undefined;
   for (let i = 0; i < messageElements.length; i++) {
     const tmpUser = getMessageUser(messageElements[i]);
+    const mid = messageElements[i].getAttribute("data-mid");
     if (tmpUser !== undefined) currentUser = tmpUser;
     const spanElements = messageElements[i].getElementsByTagName("span");
     if (spanElements.length === 0 || rid === null) continue;
@@ -49,17 +59,38 @@ const getMessages: GetMessages = () => {
       .getElementsByClassName("_timeStamp")[0]
       .getAttribute("data-tm");
     if (content === null || unixTime === null) continue;
-    //一時的にエラーを無くすために適当な値が入っている
-    /*const message: ChatworkMessageTable = {
-      mid: "",
-
+    let replys: string[] = [];
+    const replyElements = messageElements[i].getElementsByClassName("_replyMessage");
+    for (let i = 0; i < replyElements.length; i++) {
+      replys.push(replyElements[i].getAttribute("data-mid")!);
+    }
+    const message: ChatworkMessageData = {
+      isMentioned: messageElements[i].getAttribute("class")?.indexOf("mentioned") !== -1,
+      mid: mid!,
+      rid: rid,
       content: content,
       createAt: new Date(parseInt(unixTime) * 1000),
+      aid: currentUser?.aid!,
+      userName: currentUser?.name!,
+      iconUrl: currentUser?.iconUrl!,
+      replys: replys,
     };
-    rtnArray.push(message);*/
+    rtnArray.push(message);
   }
 
   return rtnArray;
+};
+
+const checkMessages = () => {
+  try {
+    const messages = getMessages();
+    chrome.runtime.sendMessage<SetChatworkMessageBM>({
+      requestKind: "setChatworkMessage",
+      messages: messages,
+    });
+  } catch (err) {
+    console.log("sendMessageErr");
+  }
 };
 
 const getUnreadMessages = () => {
@@ -96,6 +127,7 @@ const getUnreadMessages = () => {
 
 const check = () => {
   getUnreadMessages();
+  checkMessages();
 };
 let loop: NodeJS.Timer;
 if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 100);
