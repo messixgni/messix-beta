@@ -48,7 +48,7 @@ const Popup = () => {
       const rid = tab.url!.substring(30);
       if ((await db.chatworkRoom.where({ rid: rid }).count()) !== 0) return;
       setUnmanagedRoom({
-        name: tab.title!.split("-")[1].substring(1),
+        name: tab.title!.match(/((\[.*\])?Chatwork - )(.*)/)![3], // 正規表現でGroup3にルーム名がダイレクトヒットする
         rid: rid,
       });
     };
