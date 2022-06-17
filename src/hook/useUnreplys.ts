@@ -11,14 +11,12 @@ type UseUnreplys = () => {
 
 export const useUnreplys: UseUnreplys = () => {
   const messages = useLiveQuery(async () => {
-    const msgStatusList = await db.chatworkMessageStatus.where("isUnread").equals(1).toArray();
+    const msgStatusList = await db.chatworkMessageStatus
+      .filter((ms) => ms.isUnreply === true)
+      .toArray();
     return Promise.all(
       msgStatusList.map(async (status) =>
-        Object.assign(
-          {},
-          status,
-          await db.chatworkMessage.where("id").equals(status.messageId).first()
-        )
+        Object.assign({}, status, await db.chatworkMessage.get(status.messageId))
       )
     );
   });

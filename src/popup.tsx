@@ -10,8 +10,10 @@ import ForceCheckedToast from "./components/ForceCheckedToast";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 import { changeBadgeText } from "./util";
 import { isUnreadInclusiveStatus, isUnreadInclusiveStatusArray } from "./typeguard";
+import { useUnreplys } from "./hook/useUnreplys";
 
 const Popup = () => {
+  const { isLoading, messages, changeStatus } = useUnreplys();
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
   const unreads = useLiveQuery(async () => {
     const allManagedRooms = await db.chatworkRoom.toArray();
@@ -216,15 +218,15 @@ const Popup = () => {
                 </>
               ) : (
                 <>
-                  {/* unreplys &&
-                    unreplys.map((unreply) => ({
-                      <UnreplyListItem
-                        chatworkRoom={unreply}
-                        onChangeToNormal={(chatworkRoom) => {
-                          setLastChangedRoom(chatworkRoom);
-                        }}
-                      />
-                    }))*/}
+                  {isLoading ? (
+                    <p>Loading</p>
+                  ) : (
+                    <>
+                      {messages?.map((msg) => (
+                        <p>{msg.content}</p>
+                      ))}
+                    </>
+                  )}
                 </>
               )}
             </>
