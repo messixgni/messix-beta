@@ -48,7 +48,7 @@ const Popup = () => {
       const rid = tab.url!.substring(30);
       if ((await db.chatworkRoom.where({ rid: rid }).count()) !== 0) return;
       setUnmanagedRoom({
-        name: tab.title!.split("-")[1].substring(1),
+        name: tab.title!.match(/((\[.*\])?Chatwork - )(.*)/)![3], // 正規表現でGroup3にルーム名がダイレクトヒットする
         rid: rid,
       });
     };
@@ -90,14 +90,7 @@ const Popup = () => {
       console.log("datas.hasUnreadMentionedMessage");
       const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
       return (
-        <span
-          className={
-            "badge bg-secondary rounded-circle position-relative " +
-            invisible +
-            " " +
-            unreadToMessage
-          }
-        >
+        <span className={"badge bg-secondary rounded-pill " + invisible + " " + unreadToMessage}>
           {datas.unreadCount}
         </span>
       );
@@ -197,14 +190,19 @@ const Popup = () => {
             <>
               {isUnreadView ? (
                 <>
+                  <div className="d-flex align-items-center h2 fw-bold m-2">
+                    <img src="icon_chatwork.png" className="img-fluid" style={{ height: "1em" }} />
+                    Chatwork
+                  </div>
                   {unreads ? (
                     <>
                       {unreads.map((unread) => (
-                        <div className="d-flex align-items-center position-relative">
+                        <div className="unread-chatwork-room-li d-flex justify-content-between align-items-center w-50 position-relative">
                           <a
-                            className="text-decoration-none text-reset stretched-link m-2"
+                            className="d-inline-block text-truncate text-decoration-none text-reset stretched-link m-2"
                             href={`https://chatwork.com#!rid${unread.rid}`}
                             target="_blank"
+                            style={{ maxWidth: "190px" }}
                           >
                             {unread.name}
                           </a>

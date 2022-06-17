@@ -110,7 +110,7 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
           //MessageStatusの登録
           const newMessageStatusIndex = await db.chatworkMessageStatus.add({
             messageId: messageId,
-            isUnread: message.isMentioned,
+            isUnreply: message.isMentioned,
             isMarked: false,
           });
         }
@@ -137,13 +137,13 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
             .where("messageId")
             .equals(replyTargetMessage.id!)
             .first();
-          if (replyTargetMessageStatus?.isUnread) {
+          if (replyTargetMessageStatus?.isUnreply) {
             //ユーザーが返信した先のメッセージが未返信状態のとき、未返信ではなくする
             const messageStatusChangeResult = await db.chatworkMessageStatus.put({
               id: replyTargetMessageStatus.id!,
               messageId: replyTargetMessageStatus.messageId,
               isMarked: replyTargetMessageStatus.isMarked,
-              isUnread: false,
+              isUnreply: false,
             });
           }
         });

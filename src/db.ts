@@ -24,7 +24,7 @@ export class MessixDB extends Dexie {
       chatworkRoomStatus: "++id, roomId, unreadCount, hasUnreadMentionedMessage",
       chatworkMessage: "++id, roomId, mid, user, content, createAt",
       chatworkUser: "++id, aid, name, iconUrl",
-      chatworkMessageStatus: "++id, messageId, isUnread, isMarked",
+      chatworkMessageStatus: "++id, messageId, isUnreply, isMarked",
       chatworkMessageReply: "++id, replyTargetMessageId, replyMessageId",
     });
   }

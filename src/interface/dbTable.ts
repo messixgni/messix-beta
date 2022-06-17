@@ -33,7 +33,7 @@ export interface ChatworkUserTable {
 export interface ChatworkMessageStatusTable {
   id?: number;
   messageId: number;
-  isUnread: boolean;
+  isUnreply: boolean;
   isMarked: boolean;
 }
 

@@ -75,3 +75,7 @@
   background-color: rgb(87, 202, 179);
   border: 2px solid rgb(235, 239, 244);
 }
+
+.unread-chatwork-room-li:hover {
+  background-color: rgba(0,0,0,0.05);
+}
