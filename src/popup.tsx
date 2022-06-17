@@ -204,7 +204,7 @@ const Popup = () => {
                   {unreads ? (
                     <>
                       {unreads.map((unread) => (
-                        <div className="d-flex justify-content-between align-items-center w-50 position-relative">
+                        <div className="unread-chatwork-room-li d-flex justify-content-between align-items-center w-50 position-relative">
                           <a
                             className="d-inline-block text-truncate text-decoration-none text-reset stretched-link m-2"
                             href={`https://chatwork.com#!rid${unread.rid}`}
