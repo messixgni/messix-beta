@@ -90,14 +90,7 @@ const Popup = () => {
       console.log("datas.hasUnreadMentionedMessage");
       const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
       return (
-        <span
-          className={
-            "badge bg-secondary rounded-pill " +
-            invisible +
-            " " +
-            unreadToMessage
-          }
-        >
+        <span className={"badge bg-secondary rounded-pill " + invisible + " " + unreadToMessage}>
           {datas.unreadCount}
         </span>
       );
@@ -198,7 +191,7 @@ const Popup = () => {
               {isUnreadView ? (
                 <>
                   <div className="d-flex align-items-center h2 fw-bold m-2">
-                    <img src="icon_chatwork.png" className="img-fluid" style={{height: "1em"}} />
+                    <img src="icon_chatwork.png" className="img-fluid" style={{ height: "1em" }} />
                     Chatwork
                   </div>
                   {unreads ? (
