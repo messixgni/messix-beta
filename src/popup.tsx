@@ -11,6 +11,7 @@ import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 import { changeBadgeText } from "./util";
 import { isUnreadInclusiveStatus, isUnreadInclusiveStatusArray } from "./typeguard";
 import { useUnreplys } from "./hook/useUnreplys";
+import UnreplyList from "./components/UnreplyList";
 
 const Popup = () => {
   const { isLoading, messages, changeStatus } = useUnreplys();
@@ -217,17 +218,7 @@ const Popup = () => {
                   )}
                 </>
               ) : (
-                <>
-                  {isLoading ? (
-                    <p>Loading</p>
-                  ) : (
-                    <>
-                      {messages?.map((msg) => (
-                        <p>{msg.content}</p>
-                      ))}
-                    </>
-                  )}
-                </>
+                <UnreplyList />
               )}
             </>
           )}
