@@ -11,9 +11,7 @@ type UseUnreplys = () => {
 
 export const useUnreplys: UseUnreplys = () => {
   const messages = useLiveQuery(async () => {
-    const msgStatusList = await db.chatworkMessageStatus
-      .filter((ms) => ms.isUnreply === true)
-      .toArray();
+    const msgStatusList = await db.chatworkMessageStatus.where("isUnreply").equals(1).toArray();
     return Promise.all(
       msgStatusList.map(async (status) =>
         Object.assign({}, status, await db.chatworkMessage.get(status.messageId))
