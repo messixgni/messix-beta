@@ -177,8 +177,8 @@ const checkBadge = () => {
   db.transaction("r", db.chatworkMessage, db.chatworkMessageStatus, async () => {
     return (await db.chatworkMessageStatus.where("isUnreply").equals(1).toArray()).length;
   }).then((_res) => {
-    chrome.action.setBadgeText({ "text": _res.toString() });
-  })
-}
+    chrome.action.setBadgeText({ text: _res.toString() });
+  });
+};
 
 let loop: NodeJS.Timer = setInterval(checkBadge, 1000);
