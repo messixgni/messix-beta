@@ -115,7 +115,7 @@ const Popup = () => {
     return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
   };
   return (
-    <div className="d-flex flex-row" style={{ width: "600px" }}>
+    <div className="d-flex flex-row" style={{ width: "665px" }}>
       <div className="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light">
         <a
           href="/"
