@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import React from "react";
+import React, { useState } from "react";
 import { Col, Row, Form, Container } from "react-bootstrap";
 import { db } from "../db";
 import {
@@ -10,12 +10,13 @@ import {
 
 type UnreplyListItemProps = {
   chatworkMessage: ChatworkMessageTable & ChatworkMessageStatusTable;
-  onChangeToNormal: (chatworkMessage: ChatworkMessageTable & ChatworkMessageStatusTable) => void;
+  onChange: (chatworkMessage: ChatworkMessageTable & ChatworkMessageStatusTable) => void;
 };
 
-const UnreplyListItem = ({ chatworkMessage, onChangeToNormal }: UnreplyListItemProps) => {
+const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) => {
   const messageUser = useLiveQuery(() => db.chatworkUser.get(chatworkMessage.userId));
   const messageRoom = useLiveQuery(() => db.chatworkRoom.get(chatworkMessage.roomId!));
+  const [isHovered, setIsHoverd] = useState(false);
   const getReceicedTimeText: (target: Date | undefined) => string = (target) => {
     if (!target) return "";
     try {
@@ -52,10 +53,36 @@ const UnreplyListItem = ({ chatworkMessage, onChangeToNormal }: UnreplyListItemP
       return "err";
     }
   };
+  const onClickStar = () => {
+    chatworkMessage.isMarked = chatworkMessage.isMarked === 1 ? 0 : 1;
+    onChange(chatworkMessage);
+  };
+  const onClickClose = () => {
+    chatworkMessage.isUnreply = 0;
+    onChange(chatworkMessage);
+  };
   return (
-    <Container>
+    <Container
+      className="unreply-message"
+      style={{ width: "500px" }}
+      onMouseEnter={() => {
+        setIsHoverd(true);
+      }}
+      onMouseLeave={() => {
+        setIsHoverd(false);
+      }}
+    >
       <Row>
-        <Col xs={2}>
+        <div style={{ width: "40px", display: "inline-block" }}>
+          <p
+            className={isHovered || chatworkMessage.isMarked === 1 ? "" : "d-none"}
+            onClick={onClickStar}
+            style={{ color: "orange" }}
+          >
+            {chatworkMessage.isMarked === 1 ? "★" : "☆"}
+          </p>
+        </div>
+        <div style={{ width: "60px", display: "inline-block" }}>
           {messageUser ? (
             <img
               src={messageUser.iconUrl}
@@ -65,10 +92,35 @@ const UnreplyListItem = ({ chatworkMessage, onChangeToNormal }: UnreplyListItemP
           ) : (
             <></>
           )}
-        </Col>
-        <Col xs={5}>{chatworkMessage.content}</Col>
-        <Col></Col>
-        <Col xs={4}></Col>
+        </div>
+        <div style={{ width: "210px", display: "inline-block" }}>
+          <Row>
+            <h2 style={{ fontSize: "14px" }}>{messageRoom?.name ? messageRoom.name : ""}</h2>
+          </Row>
+          <Row>
+            <h3 style={{ fontSize: "12px" }}>{messageUser?.name ? messageUser.name : ""}</h3>
+          </Row>
+          <Row>
+            <p style={{ fontSize: "11px" }}>{chatworkMessage.content}</p>
+          </Row>
+        </div>
+        <div style={{ width: "48px", display: "inline-block" }}>
+          <p>{getReceicedTimeText(chatworkMessage.createAt)}</p>
+        </div>
+        <div style={{ width: "142px", display: "inline-block" }}>
+          <div className="d-flex justify-content-end" style={{ height: "14px" }}>
+            <p
+              className={isHovered ? "" : "d-none"}
+              style={{ width: "14px", fontSize: "14px" }}
+              onClick={onClickClose}
+            >
+              ×
+            </p>
+          </div>
+          <Row>
+            <p>{getElapsedTimeText(chatworkMessage.createAt)}に受信しました</p>
+          </Row>
+        </div>
       </Row>
     </Container>
   );
