@@ -24,7 +24,7 @@ const ForceCheckedToast = ({ lastChangedMessage, onClose }: Props) => {
     onClose();
   };
   const getShortText = (text: string): string => {
-    if (text.length > 15) return text.substring(0, 15);
+    if (text.length > 25) return text.substring(0, 25);
     return text;
   };
   if (!lastChangedMessage) return <></>;
