@@ -41,7 +41,6 @@ const Popup = () => {
   );
   const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
-  const [lastChangedRoom, setLastChangedRoom] = useState<ChatworkRoomTable>();
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
@@ -222,12 +221,6 @@ const Popup = () => {
               )}
             </>
           )}
-          <ForceCheckedToast
-            lastChangedRoom={lastChangedRoom}
-            onClose={() => {
-              setLastChangedRoom(undefined);
-            }}
-          />
         </div>
       </div>
     </div>

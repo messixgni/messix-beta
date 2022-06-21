@@ -1,31 +1,43 @@
 import React from "react";
 import { Toast, Button } from "react-bootstrap";
 import { db } from "../db";
-import { ChatworkRoomTable } from "../interface/dbTable";
+import { useUnreplys } from "../hook/useUnreplys";
+import {
+  ChatworkMessageStatusTable,
+  ChatworkMessageTable,
+  ChatworkRoomTable,
+} from "../interface/dbTable";
 
 type Props = {
-  lastChangedRoom: ChatworkRoomTable | undefined;
-  onClose: (lastChangedRoom: ChatworkRoomTable) => void;
+  lastChangedMessage: (ChatworkMessageTable & ChatworkMessageStatusTable) | undefined;
+  onClose: () => void;
 };
 
-const ForceCheckedToast = ({ lastChangedRoom, onClose }: Props) => {
+const ForceCheckedToast = ({ lastChangedMessage, onClose }: Props) => {
+  const { changeStatus } = useUnreplys();
   const onRestore = async () => {
-    if (!lastChangedRoom) return;
-    //lastChangedRoom.status = "unreply";
-    await db.chatworkRoom.put(lastChangedRoom);
-    onClose(lastChangedRoom);
+    changeStatus({
+      messageId: lastChangedMessage?.messageId!,
+      isUnreply: 1,
+      isMarked: lastChangedMessage?.isMarked!,
+    });
+    onClose();
   };
-  if (!lastChangedRoom) return <></>;
+  const getShortText = (text: string): string => {
+    if (text.length > 15) return text.substring(0, 15);
+    return text;
+  };
+  if (!lastChangedMessage) return <></>;
   return (
     <Toast
-      show={lastChangedRoom !== undefined}
+      show={lastChangedMessage !== undefined}
       onClose={() => {
-        onClose(lastChangedRoom!);
+        onClose();
       }}
       className="position-fixed bottom-0 end-0 force-checked-toast"
     >
       <Toast.Header>
-        <strong className="me-auto">{lastChangedRoom!.name}</strong>
+        <strong className="me-auto">{getShortText(lastChangedMessage!.content)}</strong>
       </Toast.Header>
       <Toast.Body className="d-flex align-items-center justify-content-between">
         <p className="m-0">手動解決済みにしました </p>
