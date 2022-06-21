@@ -79,3 +79,19 @@
 .unread-chatwork-room-li:hover {
   background-color: rgba(0,0,0,0.05);
 }
+
+.unreply-message-normal:hover {
+  background-color: #F4F4F4;
+}
+.unreply-message-yellow {
+  background-color: #FFF1E0;
+}
+.unreply-message-yellow:hover {
+  background-color: #FFEED7;
+}
+.unreply-message-red {
+  background-color: #FFDEE6;
+}
+.unreply-message-red:hover {
+  background-color: #FFC3D2;
+}
