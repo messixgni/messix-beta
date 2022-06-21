@@ -39,7 +39,7 @@ const Popup = () => {
     () => db.chatworkMessage.toArray()
     //db.chatworkMessage.where("status").equals("unreply").toArray()
   );
-  const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
+  const [isUnreadView, setIsUnreadView] = useState<boolean>(false);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
@@ -128,21 +128,21 @@ const Popup = () => {
           <li className="nav-item">
             <a
               href="#"
-              className={isUnreadView ? "nav-link active" : "nav-link link-dark"}
-              aria-current="page"
-              onClick={() => setIsUnreadView(true)}
-            >
-              <img src="unread.png" width="16" height="16" /> 未読 {getCountBadge(unreads)}
-            </a>
-          </li>
-          <li className="nav-item">
-            <a
-              href="#"
               className={!isUnreadView ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
               onClick={() => setIsUnreadView(false)}
             >
               <img src="unreply.png" width="16" height="16" /> 未返信 {getCountBadge(unreplys)}
+            </a>
+          </li>
+          <li className="nav-item">
+            <a
+              href="#"
+              className={isUnreadView ? "nav-link active" : "nav-link link-dark"}
+              aria-current="page"
+              onClick={() => setIsUnreadView(true)}
+            >
+              <img src="unread.png" width="16" height="16" /> 未読 {getCountBadge(unreads)}
             </a>
           </li>
         </ul>
