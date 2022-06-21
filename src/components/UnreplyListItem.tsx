@@ -54,13 +54,20 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
       return "err";
     }
   };
-  const onClickStar = () => {
+  const onClickStar: React.MouseEventHandler<HTMLElement> = (e) => {
     chatworkMessage.isMarked = chatworkMessage.isMarked === 1 ? 0 : 1;
     onChange(chatworkMessage);
+    e.stopPropagation();
   };
-  const onClickClose = () => {
+  const onClickClose: React.MouseEventHandler<HTMLElement> = (e) => {
     chatworkMessage.isUnreply = 0;
     onChange(chatworkMessage);
+    e.stopPropagation();
+  };
+  const onClickItem = () => {
+    window.open(
+      `https://www.chatwork.com/#!rid${messageRoom ? messageRoom.rid : ""}-${chatworkMessage.mid}`
+    );
   };
   return (
     <Container
@@ -72,6 +79,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
       onMouseLeave={() => {
         setIsHoverd(false);
       }}
+      onClick={onClickItem}
     >
       <Row>
         <div style={{ width: "40px", display: "inline-block" }}>
