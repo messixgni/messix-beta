@@ -80,15 +80,18 @@
   background-color: rgba(0,0,0,0.05);
 }
 
-.unreply-message {
-  font-size: "11px";
+.unreply-message-normal:hover {
+  background-color: #F4F4F4;
 }
-.unreply-message h2 {
-  font-size: "14px";
+.unreply-message-yellow {
+  background-color: #FFF1E0;
 }
-.unreply-message h3 {
-  font-size: "12px";
+.unreply-message-yellow:hover {
+  background-color: #FFEED7;
 }
-.unreply-message:hover {
-  background-color: rgba(0,0,0,0.05);
+.unreply-message-red {
+  background-color: #FFDEE6;
+}
+.unreply-message-red:hover {
+  background-color: #FFC3D2;
 }

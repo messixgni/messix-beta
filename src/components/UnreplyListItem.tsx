@@ -7,6 +7,7 @@ import {
   ChatworkMessageTable,
   ChatworkRoomTable,
 } from "../interface/dbTable";
+import { getTimePastStatus } from "../util";
 
 type UnreplyListItemProps = {
   chatworkMessage: ChatworkMessageTable & ChatworkMessageStatusTable;
@@ -63,7 +64,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
   };
   return (
     <Container
-      className="unreply-message"
+      className={"unreply-message-" + getTimePastStatus(chatworkMessage.createAt)}
       style={{ width: "500px" }}
       onMouseEnter={() => {
         setIsHoverd(true);
@@ -77,7 +78,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
           <p
             className={isHovered || chatworkMessage.isMarked === 1 ? "" : "d-none"}
             onClick={onClickStar}
-            style={{ color: "orange" }}
+            style={{ color: "orange", marginTop: "25px" }}
           >
             {chatworkMessage.isMarked === 1 ? "★" : "☆"}
           </p>
@@ -87,7 +88,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
             <img
               src={messageUser.iconUrl}
               alt=""
-              style={{ borderRadius: "50%", maxWidth: "100%" }}
+              style={{ borderRadius: "50%", maxWidth: "100%", marginTop: "20px" }}
             />
           ) : (
             <></>
@@ -105,20 +106,23 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
           </Row>
         </div>
         <div style={{ width: "48px", display: "inline-block" }}>
-          <p>{getReceicedTimeText(chatworkMessage.createAt)}</p>
+          <p style={{ marginTop: "25px" }}>{getReceicedTimeText(chatworkMessage.createAt)}</p>
         </div>
-        <div style={{ width: "142px", display: "inline-block" }}>
-          <div className="d-flex justify-content-end" style={{ height: "14px" }}>
+        <div style={{ width: "130px", display: "inline-block" }}>
+          <div className="d-flex justify-content-end" style={{ height: "16px" }}>
             <p
               className={isHovered ? "" : "d-none"}
-              style={{ width: "14px", fontSize: "14px" }}
+              style={{ width: "16px", fontSize: "16px" }}
               onClick={onClickClose}
             >
               ×
             </p>
           </div>
           <Row>
-            <p>{getElapsedTimeText(chatworkMessage.createAt)}に受信しました</p>
+            <p>
+              {getElapsedTimeText(chatworkMessage.createAt)}に<br />
+              受信しました
+            </p>
           </Row>
         </div>
       </Row>
