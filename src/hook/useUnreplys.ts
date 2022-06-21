@@ -6,7 +6,7 @@ import { ChatworkMessageStatusTable, ChatworkMessageTable } from "../interface/d
 type UseUnreplys = () => {
   isLoading: boolean;
   messages: (ChatworkMessageTable & ChatworkMessageStatusTable)[] | undefined;
-  changeStatus: (message: ChatworkMessageTable & ChatworkMessageStatusTable) => void;
+  changeStatus: (message: ChatworkMessageStatusTable) => void;
 };
 
 export const useUnreplys: UseUnreplys = () => {
@@ -18,9 +18,17 @@ export const useUnreplys: UseUnreplys = () => {
       )
     );
   });
-  const changeStatus = async (message: ChatworkMessageTable & ChatworkMessageStatusTable) => {
-    const status: ChatworkMessageStatusTable = message;
-    await db.chatworkMessageStatus.put(status);
+  const changeStatus = async (messageStatus: ChatworkMessageStatusTable) => {
+    const res = await db.chatworkMessageStatus
+      .where("messageId")
+      .equals(messageStatus.messageId)
+      .first();
+    await db.chatworkMessageStatus.put({
+      id: res?.id,
+      messageId: messageStatus.messageId,
+      isUnreply: messageStatus.isUnreply,
+      isMarked: messageStatus.isMarked,
+    });
   };
   return {
     isLoading: !messages,
