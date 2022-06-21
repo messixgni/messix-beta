@@ -166,7 +166,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       changeUnreadCount(chatworkRoomUnreadsBM);
       break;
     case "setChatworkMessage":
-      const chatworkMessageBM: SetChatworkMessageBM = message; 
+      const chatworkMessageBM: SetChatworkMessageBM = message;
       console.log(chatworkMessageBM);
       setChatworkMessages(chatworkMessageBM.messages);
   }
@@ -174,7 +174,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 const checkBadge = async () => {
-
   const badgeCount = await db.chatworkMessageStatus.where("isUnreply").equals(1).count();
   if (badgeCount != 0) {
     chrome.action.setBadgeText({ text: badgeCount.toString() });
