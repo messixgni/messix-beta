@@ -175,10 +175,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 const checkBadge = () => {
   db.transaction("r", db.chatworkMessage, db.chatworkMessageStatus, async () => {
-    return 0;
+    return db.chatworkMessageStatus.where("isUnreply").equals(1).count();
   }).then((_res) => {
     if (_res != 0) {
       chrome.action.setBadgeText({ text: _res.toString() });
+    } else {
+      chrome.action.setBadgeText({ text: "" });
     }
   });
 };
