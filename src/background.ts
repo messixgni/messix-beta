@@ -166,23 +166,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       changeUnreadCount(chatworkRoomUnreadsBM);
       break;
     case "setChatworkMessage":
-      const chatworkMessageBM: SetChatworkMessageBM = message;
+      const chatworkMessageBM: SetChatworkMessageBM = message; 
       console.log(chatworkMessageBM);
       setChatworkMessages(chatworkMessageBM.messages);
   }
   return true;
 });
 
-const checkBadge = () => {
-  db.transaction("r", db.chatworkMessage, db.chatworkMessageStatus, async () => {
-    return db.chatworkMessageStatus.where("isUnreply").equals(1).count();
-  }).then((_res) => {
-    if (_res != 0) {
-      chrome.action.setBadgeText({ text: _res.toString() });
-    } else {
-      chrome.action.setBadgeText({ text: "" });
-    }
-  });
+const checkBadge = async () => {
+
+  const badgeCount = await db.chatworkMessageStatus.where("isUnreply").equals(1).count();
+  if (badgeCount != 0) {
+    chrome.action.setBadgeText({ text: badgeCount.toString() });
+  } else {
+    chrome.action.setBadgeText({ text: "" });
+  }
 };
 
 let loop: NodeJS.Timer = setInterval(checkBadge, 1000);
