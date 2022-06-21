@@ -1,21 +1,23 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import React from "react";
-import { Col, Row, Form } from "react-bootstrap";
+import React, { useState } from "react";
+import { Col, Row, Form, Container } from "react-bootstrap";
 import { db } from "../db";
-import { ChatworkMessageTable, ChatworkRoomTable } from "../interface/dbTable";
+import {
+  ChatworkMessageStatusTable,
+  ChatworkMessageTable,
+  ChatworkRoomTable,
+} from "../interface/dbTable";
+import { getTimePastStatus } from "../util";
 
 type UnreplyListItemProps = {
-  chatworkRoom: ChatworkMessageTable;
-  onChangeToNormal: (chatworkRoom: ChatworkRoomTable) => void;
+  chatworkMessage: ChatworkMessageTable & ChatworkMessageStatusTable;
+  onChange: (chatworkMessage: ChatworkMessageTable & ChatworkMessageStatusTable) => void;
 };
 
-const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProps) => {
-  const latestMessage = useLiveQuery(() => {
-    if (chatworkRoom.roomId === undefined) {
-      return [];
-    }
-    return db.chatworkMessage.where("rid").equals(chatworkRoom.roomId).toArray();
-  });
+const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) => {
+  const messageUser = useLiveQuery(() => db.chatworkUser.get(chatworkMessage.userId));
+  const messageRoom = useLiveQuery(() => db.chatworkRoom.get(chatworkMessage.roomId!));
+  const [isHovered, setIsHoverd] = useState(false);
   const getReceicedTimeText: (target: Date | undefined) => string = (target) => {
     if (!target) return "";
     try {
@@ -52,53 +54,79 @@ const UnreplyListItem = ({ chatworkRoom, onChangeToNormal }: UnreplyListItemProp
       return "err";
     }
   };
-  const changeToNormal = () => {
-    /*chatworkRoom.status = "normal";
-    db.chatworkRoom.put(chatworkRoom);
-    onChangeToNormal(chatworkRoom);*/
+  const onClickStar = () => {
+    chatworkMessage.isMarked = chatworkMessage.isMarked === 1 ? 0 : 1;
+    onChange(chatworkMessage);
+  };
+  const onClickClose = () => {
+    chatworkMessage.isUnreply = 0;
+    onChange(chatworkMessage);
   };
   return (
-    <div className="d-flex flex-row align-items-stretch">
-      <Form className="">
-        <Form.Group className="h-100">
-          <Form.Label className="h-100 d-flex align-items-center px-2">
-            <Form.Check
-              className="unreply-item"
-              type={"radio"}
-              id={`${chatworkRoom.roomId}-radio`}
-              onChange={changeToNormal}
-            ></Form.Check>
-          </Form.Label>
-        </Form.Group>
-      </Form>
-      <a
-        className="d-flex flex-row room-link"
-        href={`https://chatwork.com#!rid${chatworkRoom.roomId}`}
-        target="_blank"
-      >
-        <div className="d-flex align-items-center mx-2">
-          <div className="" style={{ width: "200px" }}>
-            <p className="small fw-bold m-0 text-truncate received-message">
-              {/*latestMessage ? latestMessage[0].userName : ""*/}
-            </p>
-            <p className="m-0 text-truncate received-message">
-              {latestMessage ? latestMessage[0].content : ""}
+    <Container
+      className={"unreply-message-" + getTimePastStatus(chatworkMessage.createAt)}
+      style={{ width: "500px" }}
+      onMouseEnter={() => {
+        setIsHoverd(true);
+      }}
+      onMouseLeave={() => {
+        setIsHoverd(false);
+      }}
+    >
+      <Row>
+        <div style={{ width: "40px", display: "inline-block" }}>
+          <p
+            className={isHovered || chatworkMessage.isMarked === 1 ? "" : "d-none"}
+            onClick={onClickStar}
+            style={{ color: "orange", marginTop: "25px" }}
+          >
+            {chatworkMessage.isMarked === 1 ? "★" : "☆"}
+          </p>
+        </div>
+        <div style={{ width: "60px", display: "inline-block" }}>
+          {messageUser ? (
+            <img
+              src={messageUser.iconUrl}
+              alt=""
+              style={{ borderRadius: "50%", maxWidth: "100%", marginTop: "20px" }}
+            />
+          ) : (
+            <></>
+          )}
+        </div>
+        <div style={{ width: "210px", display: "inline-block" }}>
+          <Row>
+            <h2 style={{ fontSize: "14px" }}>{messageRoom?.name ? messageRoom.name : ""}</h2>
+          </Row>
+          <Row>
+            <h3 style={{ fontSize: "12px" }}>{messageUser?.name ? messageUser.name : ""}</h3>
+          </Row>
+          <Row>
+            <p style={{ fontSize: "11px" }}>{chatworkMessage.content}</p>
+          </Row>
+        </div>
+        <div style={{ width: "48px", display: "inline-block" }}>
+          <p style={{ marginTop: "25px" }}>{getReceicedTimeText(chatworkMessage.createAt)}</p>
+        </div>
+        <div style={{ width: "130px", display: "inline-block" }}>
+          <div className="d-flex justify-content-end" style={{ height: "16px" }}>
+            <p
+              className={isHovered ? "" : "d-none"}
+              style={{ width: "16px", fontSize: "16px" }}
+              onClick={onClickClose}
+            >
+              ×
             </p>
           </div>
+          <Row>
+            <p>
+              {getElapsedTimeText(chatworkMessage.createAt)}に<br />
+              受信しました
+            </p>
+          </Row>
         </div>
-        <div className="d-flex align-items-center mx-2">
-          <p className="small received-time m-0">
-            {getReceicedTimeText(latestMessage ? latestMessage[0].createAt : undefined)}
-          </p>
-        </div>
-        <div className="align-items-center mx-2">
-          <p className="small popup-warning-text m-0">
-            {getElapsedTimeText(latestMessage ? latestMessage[0].createAt : undefined)}
-            に受信しました。<br></br>返信忘れてませんか？
-          </p>
-        </div>
-      </a>
-    </div>
+      </Row>
+    </Container>
   );
 };
 

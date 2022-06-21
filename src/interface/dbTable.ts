@@ -33,8 +33,8 @@ export interface ChatworkUserTable {
 export interface ChatworkMessageStatusTable {
   id?: number;
   messageId: number;
-  isUnreply: boolean;
-  isMarked: boolean;
+  isUnreply: number;
+  isMarked: number;
 }
 
 export interface ChatworkMessageReplyTable {

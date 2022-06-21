@@ -10,8 +10,11 @@ import ForceCheckedToast from "./components/ForceCheckedToast";
 import { ChatworkRoomTable, ChatworkMessageTable } from "./interface/dbTable";
 import { changeBadgeText } from "./util";
 import { isUnreadInclusiveStatus, isUnreadInclusiveStatusArray } from "./typeguard";
+import { useUnreplys } from "./hook/useUnreplys";
+import UnreplyList from "./components/UnreplyList";
 
 const Popup = () => {
+  const { isLoading, messages, changeStatus } = useUnreplys();
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
   const unreads = useLiveQuery(async () => {
     const allManagedRooms = await db.chatworkRoom.toArray();
@@ -32,13 +35,9 @@ const Popup = () => {
     return val;
   });
   console.log(unreads);
-  const unreplys = useLiveQuery(
-    () => db.chatworkMessage.toArray()
-    //db.chatworkMessage.where("status").equals("unreply").toArray()
-  );
-  const [isUnreadView, setIsUnreadView] = useState<boolean>(true);
+  const unreply = useUnreplys();
+  const [isUnreadView, setIsUnreadView] = useState<boolean>(false);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
-  const [lastChangedRoom, setLastChangedRoom] = useState<ChatworkRoomTable>();
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
@@ -112,7 +111,7 @@ const Popup = () => {
     return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
   };
   return (
-    <div className="d-flex flex-row" style={{ width: "600px" }}>
+    <div className="d-flex flex-row" style={{ width: "665px" }}>
       <div className="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light">
         <a
           href="/"
@@ -126,21 +125,22 @@ const Popup = () => {
           <li className="nav-item">
             <a
               href="#"
-              className={isUnreadView ? "nav-link active" : "nav-link link-dark"}
+              className={!isUnreadView ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
-              onClick={() => setIsUnreadView(true)}
+              onClick={() => setIsUnreadView(false)}
             >
-              <img src="unread.png" width="16" height="16" /> 未読 {getCountBadge(unreads)}
+              <img src="unreply.png" width="16" height="16" /> 未返信{" "}
+              {getCountBadge(unreply.messages)}
             </a>
           </li>
           <li className="nav-item">
             <a
               href="#"
-              className={!isUnreadView ? "nav-link active" : "nav-link link-dark"}
+              className={isUnreadView ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
-              onClick={() => setIsUnreadView(false)}
+              onClick={() => setIsUnreadView(true)}
             >
-              <img src="unreply.png" width="16" height="16" /> 未返信 {getCountBadge(unreplys)}
+              <img src="unread.png" width="16" height="16" /> 未読 {getCountBadge(unreads)}
             </a>
           </li>
         </ul>
@@ -215,26 +215,10 @@ const Popup = () => {
                   )}
                 </>
               ) : (
-                <>
-                  {/* unreplys &&
-                    unreplys.map((unreply) => ({
-                      <UnreplyListItem
-                        chatworkRoom={unreply}
-                        onChangeToNormal={(chatworkRoom) => {
-                          setLastChangedRoom(chatworkRoom);
-                        }}
-                      />
-                    }))*/}
-                </>
+                <UnreplyList />
               )}
             </>
           )}
-          <ForceCheckedToast
-            lastChangedRoom={lastChangedRoom}
-            onClose={() => {
-              setLastChangedRoom(undefined);
-            }}
-          />
         </div>
       </div>
     </div>
