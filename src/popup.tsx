@@ -35,10 +35,7 @@ const Popup = () => {
     return val;
   });
   console.log(unreads);
-  const unreplys = useLiveQuery(
-    () => db.chatworkMessage.toArray()
-    //db.chatworkMessage.where("status").equals("unreply").toArray()
-  );
+  const unreply = useUnreplys();
   const [isUnreadView, setIsUnreadView] = useState<boolean>(false);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
   useEffect(() => {
@@ -132,7 +129,8 @@ const Popup = () => {
               aria-current="page"
               onClick={() => setIsUnreadView(false)}
             >
-              <img src="unreply.png" width="16" height="16" /> 未返信 {getCountBadge(unreplys)}
+              <img src="unreply.png" width="16" height="16" /> 未返信{" "}
+              {getCountBadge(unreply.messages)}
             </a>
           </li>
           <li className="nav-item">
