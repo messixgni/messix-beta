@@ -172,3 +172,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   return true;
 });
+
+const checkBadge = async () => {
+  const badgeCount = await db.chatworkMessageStatus.where("isUnreply").equals(1).count();
+  if (badgeCount != 0) {
+    chrome.action.setBadgeText({ text: badgeCount.toString() });
+  } else {
+    chrome.action.setBadgeText({ text: "" });
+  }
+};
+
+let loop: NodeJS.Timer = setInterval(checkBadge, 1000);
