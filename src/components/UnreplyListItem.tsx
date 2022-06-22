@@ -76,6 +76,9 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
       onMouseEnter={() => {
         setIsHoverd(true);
       }}
+      onMouseOver={() => {
+        setIsHoverd(true);
+      }}
       onMouseLeave={() => {
         setIsHoverd(false);
       }}
