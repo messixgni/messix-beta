@@ -86,13 +86,19 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
     >
       <Row>
         <div style={{ width: "40px", display: "inline-block" }}>
-          <p
+          <button
             className={isHovered || chatworkMessage.isMarked === 1 ? "" : "d-none"}
             onClick={onClickStar}
-            style={{ color: "orange", marginTop: "25px" }}
+            style={{
+              color: "orange",
+              marginTop: "25px",
+              border: 0,
+              borderRadius: "3px",
+              backgroundColor: isHovered ? "#E1E1E1" : "rgba(0,0,0,0)",
+            }}
           >
             {chatworkMessage.isMarked === 1 ? "★" : "☆"}
-          </p>
+          </button>
         </div>
         <div style={{ width: "60px", display: "inline-block" }}>
           {messageUser ? (
@@ -120,14 +126,20 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
           <p style={{ marginTop: "25px" }}>{getReceicedTimeText(chatworkMessage.createAt)}</p>
         </div>
         <div style={{ width: "130px", display: "inline-block" }}>
-          <div className="d-flex justify-content-end" style={{ height: "16px" }}>
-            <p
+          <div className="d-flex justify-content-end" style={{ height: "20px" }}>
+            <button
               className={isHovered ? "" : "d-none"}
-              style={{ width: "16px", fontSize: "16px" }}
+              style={{
+                width: "25px",
+                fontSize: "10px",
+                border: 0,
+                borderRadius: "3px",
+                backgroundColor: "#E1E1E1",
+              }}
               onClick={onClickClose}
             >
               ×
-            </p>
+            </button>
           </div>
           <Row>
             <p>
