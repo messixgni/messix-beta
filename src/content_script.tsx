@@ -52,9 +52,14 @@ const getMessages: GetMessages = () => {
     const tmpUser = getMessageUser(messageElements[i]);
     const mid = messageElements[i].getAttribute("data-mid");
     if (tmpUser !== undefined) currentUser = tmpUser;
-    const spanElements = messageElements[i].getElementsByTagName("span");
-    if (spanElements.length === 0 || rid === null) continue;
-    const content = spanElements[0].textContent;
+    const preElements = messageElements[i].getElementsByTagName("pre");
+    if (preElements.length === 0 || rid === null) continue;
+    let content = "";
+    for (let i = 0; i < preElements[0].children.length; i++) {
+      if (preElements[0].children[i].tagName === "SPAN") {
+        content += preElements[0].children[i].textContent + " ";
+      }
+    }
     const unixTime = messageElements[i]
       .getElementsByClassName("_timeStamp")[0]
       .getAttribute("data-tm");
