@@ -34,7 +34,6 @@ const Popup = () => {
     });
     return val;
   });
-  console.log(unreads);
   const unreply = useUnreplys();
   const [isUnreadView, setIsUnreadView] = useState<boolean>(false);
   const [isSettingView, setIsSettingView] = useState<boolean>(false);
@@ -54,12 +53,12 @@ const Popup = () => {
     getBrowserActiveTabInfo();
     changeBadgeText();
   }, []);
-  const onClickAddManageBtn = () => {
+  const onClickAddManageBtn = (isActive: boolean) => {
     db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
       const index = await db.chatworkRoom.add({
         name: unmanagedRoom!.name,
         rid: unmanagedRoom!.rid,
-        isActive: true,
+        isActive: isActive,
       });
       const room = await db.chatworkRoom.get(index);
       if (!room) throw "ChatworkRoomNotFound";
@@ -180,7 +179,12 @@ const Popup = () => {
             <p>
               『<strong>{unmanagedRoom.name}</strong>』のチャットを通知管理しますか？
             </p>
-            <Button className="btn-sm btn-primary" onClick={onClickAddManageBtn}>
+            <Button
+              className="btn-sm btn-primary"
+              onClick={() => {
+                onClickAddManageBtn(true);
+              }}
+            >
               はい
             </Button>
             <button
@@ -189,7 +193,7 @@ const Popup = () => {
               data-bs-dismiss="alert"
               aria-label="Close"
               onClick={() => {
-                setUnmanagedRoom(undefined);
+                onClickAddManageBtn(false);
               }}
             ></button>
           </div>
