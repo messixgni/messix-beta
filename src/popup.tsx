@@ -79,19 +79,32 @@ const Popup = () => {
   const getCountBadge = (
     datas: UnreadInclusiveStatus | UnreadInclusiveStatus[] | ChatworkMessageTable[] | undefined
   ) => {
-    console.log("datas");
-    console.log(datas);
     if (!datas) return <></>; //datasがundefined
 
     if (isUnreadInclusiveStatus(datas)) {
       //datasがUnreadInclusiveStatus型
-      const invisible = datas.unreadCount ? "" : "invisible";
+      const invisible = datas.unreadCount ? "" : "d-none";
       console.log("datas.hasUnreadMentionedMessage");
       const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
       return (
-        <span className={"badge bg-secondary rounded-pill " + invisible + " " + unreadToMessage}>
-          {datas.unreadCount}
-        </span>
+        <div
+          className={
+            invisible +
+            " unread-chatwork-room-li d-flex justify-content-between align-items-center w-50 position-relative"
+          }
+        >
+          <a
+            className="d-inline-block text-truncate text-decoration-none text-reset stretched-link m-2"
+            href={`https://chatwork.com#!rid${datas.rid}`}
+            target="_blank"
+            style={{ maxWidth: "190px" }}
+          >
+            {datas.name}
+          </a>
+          <span className={"badge bg-secondary rounded-pill " + unreadToMessage}>
+            {datas.unreadCount}
+          </span>
+        </div>
       );
     }
 
@@ -194,25 +207,7 @@ const Popup = () => {
                     <img src="icon_chatwork.png" className="img-fluid" style={{ height: "1em" }} />
                     Chatwork
                   </div>
-                  {unreads ? (
-                    <>
-                      {unreads.map((unread) => (
-                        <div className="unread-chatwork-room-li d-flex justify-content-between align-items-center w-50 position-relative">
-                          <a
-                            className="d-inline-block text-truncate text-decoration-none text-reset stretched-link m-2"
-                            href={`https://chatwork.com#!rid${unread.rid}`}
-                            target="_blank"
-                            style={{ maxWidth: "190px" }}
-                          >
-                            {unread.name}
-                          </a>
-                          {getCountBadge(unread)}
-                        </div>
-                      ))}
-                    </>
-                  ) : (
-                    <></>
-                  )}
+                  {unreads ? <>{unreads.map((unread) => getCountBadge(unread))}</> : <></>}
                 </>
               ) : (
                 <UnreplyList />
