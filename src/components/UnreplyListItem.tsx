@@ -54,13 +54,20 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
       return "err";
     }
   };
-  const onClickStar = () => {
+  const onClickStar: React.MouseEventHandler<HTMLElement> = (e) => {
     chatworkMessage.isMarked = chatworkMessage.isMarked === 1 ? 0 : 1;
     onChange(chatworkMessage);
+    e.stopPropagation();
   };
-  const onClickClose = () => {
+  const onClickClose: React.MouseEventHandler<HTMLElement> = (e) => {
     chatworkMessage.isUnreply = 0;
     onChange(chatworkMessage);
+    e.stopPropagation();
+  };
+  const onClickItem = () => {
+    window.open(
+      `https://www.chatwork.com/#!rid${messageRoom ? messageRoom.rid : ""}-${chatworkMessage.mid}`
+    );
   };
   return (
     <Container
@@ -69,19 +76,29 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
       onMouseEnter={() => {
         setIsHoverd(true);
       }}
+      onMouseOver={() => {
+        setIsHoverd(true);
+      }}
       onMouseLeave={() => {
         setIsHoverd(false);
       }}
+      onClick={onClickItem}
     >
       <Row>
         <div style={{ width: "40px", display: "inline-block" }}>
-          <p
+          <button
             className={isHovered || chatworkMessage.isMarked === 1 ? "" : "d-none"}
             onClick={onClickStar}
-            style={{ color: "orange", marginTop: "25px" }}
+            style={{
+              color: "orange",
+              marginTop: "25px",
+              border: 0,
+              borderRadius: "3px",
+              backgroundColor: isHovered ? "#E1E1E1" : "rgba(0,0,0,0)",
+            }}
           >
             {chatworkMessage.isMarked === 1 ? "★" : "☆"}
-          </p>
+          </button>
         </div>
         <div style={{ width: "60px", display: "inline-block" }}>
           {messageUser ? (
@@ -109,14 +126,20 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
           <p style={{ marginTop: "25px" }}>{getReceicedTimeText(chatworkMessage.createAt)}</p>
         </div>
         <div style={{ width: "130px", display: "inline-block" }}>
-          <div className="d-flex justify-content-end" style={{ height: "16px" }}>
-            <p
+          <div className="d-flex justify-content-end" style={{ height: "20px" }}>
+            <button
               className={isHovered ? "" : "d-none"}
-              style={{ width: "16px", fontSize: "16px" }}
+              style={{
+                width: "25px",
+                fontSize: "10px",
+                border: 0,
+                borderRadius: "3px",
+                backgroundColor: "#E1E1E1",
+              }}
               onClick={onClickClose}
             >
               ×
-            </p>
+            </button>
           </div>
           <Row>
             <p>
