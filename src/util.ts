@@ -8,6 +8,6 @@ export const getTimePastStatus = (time: Date): string => {
   const pastTime = Date.now() - new Date(time).getTime();
   const hours = pastTime / (1000 * 60 * 60);
   if (hours > 24) return "red";
-  if (hours > 6) return "yellow";
+  if (hours > 3) return "yellow";
   return "normal";
 };
