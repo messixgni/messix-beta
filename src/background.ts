@@ -52,7 +52,7 @@ const changeUnreadCount = async (backgroundMessage: SetChatworkRoomUnreadsBM) =>
 const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
   if (messages.length === 0) return;
   const targetRoom = await db.chatworkRoom.where("rid").equals(messages[0].rid).first();
-  if (!targetRoom) return;
+  if (!targetRoom || !targetRoom.isActive) return;
   messages.forEach(async (message) => {
     //指定日-3日よりcreateAtが小さい（前の時間）だったらDB登録をしない・仮の処理なので後で消す
     //現在指定日は2022/06/22 16:46:11(1655883971000)となっている
