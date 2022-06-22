@@ -87,7 +87,12 @@ const Popup = () => {
       console.log("datas.hasUnreadMentionedMessage");
       const unreadToMessage = datas.hasUnreadMentionedMessage ? "unreadToMessage" : "";
       return (
-        <div className={invisible + " unread-chatwork-room-li d-flex justify-content-between align-items-center w-50 position-relative"} >
+        <div
+          className={
+            invisible +
+            " unread-chatwork-room-li d-flex justify-content-between align-items-center w-50 position-relative"
+          }
+        >
           <a
             className="d-inline-block text-truncate text-decoration-none text-reset stretched-link m-2"
             href={`https://chatwork.com#!rid${datas.rid}`}
