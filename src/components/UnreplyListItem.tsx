@@ -72,7 +72,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
   return (
     <Container
       className={"unreply-message-" + getTimePastStatus(chatworkMessage.createAt)}
-      style={{ width: "500px" }}
+      // style={{ width: "500px" }}
       onMouseEnter={() => {
         setIsHoverd(true);
       }}
@@ -85,7 +85,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
       onClick={onClickItem}
     >
       <Row>
-        <div style={{ width: "40px", display: "inline-block" }}>
+        <div style={{ width: "30px", display: "inline-block" }}>
           <button
             className={isHovered || chatworkMessage.isMarked === 1 ? "" : "d-none"}
             onClick={onClickStar}
@@ -111,7 +111,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
             <></>
           )}
         </div>
-        <div style={{ width: "210px", display: "inline-block" }}>
+        <div className="text-truncate" style={{ width: "210px", display: "inline-block" }}>
           <Row>
             <h2 style={{ fontSize: "14px" }}>{messageRoom?.name ? messageRoom.name : ""}</h2>
           </Row>
@@ -125,7 +125,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
         <div style={{ width: "48px", display: "inline-block" }}>
           <p style={{ marginTop: "25px" }}>{getReceicedTimeText(chatworkMessage.createAt)}</p>
         </div>
-        <div style={{ width: "130px", display: "inline-block" }}>
+        <div style={{ width: "120px", display: "inline-block" }}>
           <div className="d-flex justify-content-end" style={{ height: "20px" }}>
             <button
               className={isHovered ? "" : "d-none"}
