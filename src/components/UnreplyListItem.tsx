@@ -111,7 +111,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
             <></>
           )}
         </div>
-        <div className="text-truncate" style={{ width: "210px", display: "inline-block" }}>
+        <div className="text-break" style={{ width: "210px", display: "inline-block" }}>
           <Row>
             <h2 style={{ fontSize: "14px" }}>{messageRoom?.name ? messageRoom.name : ""}</h2>
           </Row>
