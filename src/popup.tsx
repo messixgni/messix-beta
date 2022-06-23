@@ -122,7 +122,7 @@ const Popup = () => {
     }
 
     //datasがChatworkMessageTable[]
-    const unreplyBadge = datas.length >= 10 ? "9+" : datas.length.toString()
+    const unreplyBadge = datas.length >= 10 ? "9+" : datas.length.toString();
     return <span className="badge rounded-pill bg-danger">{unreplyBadge}</span>;
   };
   return (
