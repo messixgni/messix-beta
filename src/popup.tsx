@@ -121,7 +121,7 @@ const Popup = () => {
     }
 
     //datasがChatworkMessageTable[]
-    const badge = datas.length >= 10 ? "9+" : datas.length.toString()
+    const badge = datas.length >= 10 ? "9+" : datas.length.toString();
     return <span className="badge rounded-pill bg-danger">{badge}</span>;
   };
   return (
