@@ -117,12 +117,13 @@ const Popup = () => {
         return sum + elem.unreadCount;
       }, 0);
       const invisible = val ? "" : "invisible";
-      return <span className={"badge rounded-pill bg-danger " + invisible}>{val}</span>;
+      const unreadBadge = val >= 10 ? "9+" : val.toString();
+      return <span className={"badge rounded-pill bg-danger " + invisible}>{unreadBadge}</span>;
     }
 
     //datasがChatworkMessageTable[]
-    const badge = datas.length >= 10 ? "9+" : datas.length.toString()
-    return <span className="badge rounded-pill bg-danger">{badge}</span>;
+    const unreplyBadge = datas.length >= 10 ? "9+" : datas.length.toString()
+    return <span className="badge rounded-pill bg-danger">{unreplyBadge}</span>;
   };
   return (
     <div className="d-flex flex-row" style={{ width: "665px" }}>
