@@ -116,15 +116,17 @@ const Popup = () => {
         return sum + elem.unreadCount;
       }, 0);
       const invisible = val ? "" : "invisible";
-      return <span className={"badge rounded-pill bg-danger " + invisible}>{val}</span>;
+      const unreadBadge = val >= 10 ? "9+" : val.toString();
+      return <span className={"badge rounded-pill bg-danger " + invisible}>{unreadBadge}</span>;
     }
 
     //datasがChatworkMessageTable[]
-    return <span className="badge rounded-pill bg-danger">{datas.length}</span>;
+    const unreplyBadge = datas.length >= 10 ? "9+" : datas.length.toString();
+    return <span className="badge rounded-pill bg-danger">{unreplyBadge}</span>;
   };
   return (
     <div className="d-flex flex-row" style={{ width: "665px" }}>
-      <div className="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light">
+      <div className="sidebar d-flex flex-column flex-shrink-0 p-2 bg-light">
         <a
           href="/"
           className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
