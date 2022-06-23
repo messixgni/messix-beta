@@ -119,7 +119,9 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
             <h3 style={{ fontSize: "12px" }}>{messageUser?.name ? messageUser.name : ""}</h3>
           </Row>
           <Row>
-            <p style={{ fontSize: "11px" }}>{chatworkMessage.content}</p>
+            <p className="unreply-message-content" style={{ fontSize: "11px" }}>
+              {chatworkMessage.content}
+            </p>
           </Row>
         </div>
         <div style={{ width: "48px", display: "inline-block" }}>
