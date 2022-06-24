@@ -10,6 +10,7 @@ type ChatworkRoomActiveSwitchProps = {
 const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
   const onChange = () => {
     room.isActive = !room.isActive;
+    room.activeAt = new Date(Date.now());
     db.chatworkRoom.put(room);
   };
   return (

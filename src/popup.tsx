@@ -59,6 +59,7 @@ const Popup = () => {
         name: unmanagedRoom!.name,
         rid: unmanagedRoom!.rid,
         isActive: isActive,
+        activeAt: new Date(Date.now()),
       });
       const room = await db.chatworkRoom.get(index);
       if (!room) throw "ChatworkRoomNotFound";
