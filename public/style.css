@@ -28,7 +28,6 @@
 
 .popup-tab-selected {
   background-color: lightgray;
-
 }
 
 .popup-tab-selected p {
@@ -77,21 +76,29 @@
 }
 
 .unread-chatwork-room-li:hover {
-  background-color: rgba(0,0,0,0.05);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .unreply-message-normal:hover {
-  background-color: #F4F4F4;
+  background-color: #f4f4f4;
 }
 .unreply-message-yellow {
-  background-color: #FFF1E0;
+  background-color: #fff1e0;
 }
 .unreply-message-yellow:hover {
-  background-color: #FFEED7;
+  background-color: #ffeed7;
 }
 .unreply-message-red {
-  background-color: #FFDEE6;
+  background-color: #ffdee6;
 }
 .unreply-message-red:hover {
-  background-color: #FFC3D2;
+  background-color: #ffc3d2;
+}
+.unreply-message-content {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5em;
+  max-height: 4.5em;
 }

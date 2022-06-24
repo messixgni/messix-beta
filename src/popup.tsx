@@ -172,7 +172,7 @@ const Popup = () => {
           </a>
         </div>
       </div>
-      <div className="MainContents w-100">
+      <div className="MainContents" style={{ width: "500px" }}>
         {unmanagedRoom ? (
           <div
             className="managementNotification alert alert-info alert-dismissible fade show"
