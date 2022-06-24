@@ -20,7 +20,7 @@ export class MessixDB extends Dexie {
   constructor() {
     super(dbName);
     this.version(1).stores({
-      chatworkRoom: "++id, rid, isActive, name",
+      chatworkRoom: "++id, rid, isActive, name, activeAt",
       chatworkRoomStatus: "++id, roomId, unreadCount, hasUnreadMentionedMessage",
       chatworkMessage: "++id, roomId, mid, user, content, createAt",
       chatworkUser: "++id, aid, name, iconUrl",
