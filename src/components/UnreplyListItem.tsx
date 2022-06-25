@@ -18,19 +18,6 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
   const messageUser = useLiveQuery(() => db.chatworkUser.get(chatworkMessage.userId));
   const messageRoom = useLiveQuery(() => db.chatworkRoom.get(chatworkMessage.roomId!));
   const [isHovered, setIsHoverd] = useState(false);
-  const getReceicedTimeText: (target: Date | undefined) => string = (target) => {
-    if (!target) return "";
-    try {
-      const hour = new Date(target).getHours().toString();
-      const min = new Date(target).getMinutes().toString();
-      return hour + ":" + min;
-    } catch (err) {
-      if (err instanceof Error) {
-        return err.message;
-      }
-      return "err";
-    }
-  };
   const getElapsedTimeText: (target: Date | undefined) => string = (target) => {
     if (!target) return "";
     try {
@@ -111,7 +98,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
             <></>
           )}
         </div>
-        <div className="text-break" style={{ width: "210px", display: "inline-block" }}>
+        <div className="text-break" style={{ width: "258px", display: "inline-block" }}>
           <Row>
             <h2 style={{ fontSize: "14px" }}>{messageRoom?.name ? messageRoom.name : ""}</h2>
           </Row>
@@ -123,9 +110,6 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
               {chatworkMessage.content}
             </p>
           </Row>
-        </div>
-        <div style={{ width: "48px", display: "inline-block" }}>
-          <p style={{ marginTop: "25px" }}>{getReceicedTimeText(chatworkMessage.createAt)}</p>
         </div>
         <div style={{ width: "120px", display: "inline-block" }}>
           <div className="d-flex justify-content-end" style={{ height: "20px" }}>
