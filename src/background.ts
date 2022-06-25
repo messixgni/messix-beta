@@ -55,8 +55,7 @@ const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
   if (!targetRoom || !targetRoom.isActive) return;
   messages.forEach(async (message) => {
     //有効化日-3日よりcreateAtが小さい（前の時間）だったらDB登録をしない
-    if (new Date(message.createAt).getTime() < new Date(targetRoom.activeAt).getTime() - 259200000)
-      return;
+    if (new Date(message.createAt).getTime() < new Date(targetRoom.activeAt).getTime()) return;
     const queryResult = await db.chatworkMessage.where("mid").equals(message.mid).first();
     if (queryResult) return;
     db.transaction(
