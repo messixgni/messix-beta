@@ -56,7 +56,10 @@ const getMessages: GetMessages = () => {
     if (preElements.length === 0 || rid === null) continue;
     let content = "";
     for (let i = 0; i < preElements[0].children.length; i++) {
-      if (preElements[0].children[i].tagName === "SPAN") {
+      if (
+        preElements[0].children[i].tagName === "SPAN" ||
+        preElements[0].children[i].tagName === "A"
+      ) {
         content += preElements[0].children[i].textContent + " ";
       }
     }
