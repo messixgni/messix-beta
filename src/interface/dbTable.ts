@@ -5,6 +5,7 @@ export interface ChatworkRoomTable {
   rid: string;
   isActive: boolean;
   name: string;
+  activeAt: Date;
 }
 
 export interface ChatworkRoomStatusTable {
