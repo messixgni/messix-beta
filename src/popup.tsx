@@ -14,7 +14,6 @@ import { useUnreplys } from "./hook/useUnreplys";
 import UnreplyList from "./components/UnreplyList";
 
 const Popup = () => {
-  const { isLoading, messages, changeStatus } = useUnreplys();
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
   const unreads = useLiveQuery(async () => {
     const allManagedRooms = await db.chatworkRoom.toArray();
@@ -35,8 +34,7 @@ const Popup = () => {
     return val;
   });
   const unreply = useUnreplys();
-  const [isUnreadView, setIsUnreadView] = useState<boolean>(false);
-  const [isSettingView, setIsSettingView] = useState<boolean>(false);
+  const [sideMenuSelectIndex, setSideMenuSelectIndex] = useState(0);
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
@@ -127,21 +125,18 @@ const Popup = () => {
   return (
     <div className="d-flex flex-row" style={{ width: "665px" }}>
       <div className="sidebar d-flex flex-column flex-shrink-0 p-2 bg-light">
-        <a
-          href="/"
-          className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none"
-        >
+        <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
           <img src="messix-logo.png" width="103" height="41" />
           <span className="fs-4"></span>
-        </a>
+        </div>
         <hr />
         <ul className="nav nav-pills flex-column mb-auto">
           <li className="nav-item">
             <a
               href="#"
-              className={!isUnreadView ? "nav-link active" : "nav-link link-dark"}
+              className={sideMenuSelectIndex === 0 ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
-              onClick={() => setIsUnreadView(false)}
+              onClick={() => setSideMenuSelectIndex(0)}
             >
               <img src="unreply.png" width="16" height="16" /> 未返信{" "}
               {getCountBadge(unreply.messages)}
@@ -150,27 +145,28 @@ const Popup = () => {
           <li className="nav-item">
             <a
               href="#"
-              className={isUnreadView ? "nav-link active" : "nav-link link-dark"}
+              className={sideMenuSelectIndex === 1 ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
-              onClick={() => setIsUnreadView(true)}
+              onClick={() => setSideMenuSelectIndex(1)}
             >
               <img src="unread.png" width="16" height="16" /> 未読 {getCountBadge(unreads)}
             </a>
           </li>
+          <li className="sidecar__btm align-items-end nav-item">
+            <hr />
+            <a
+              href="#"
+              className={sideMenuSelectIndex === 2 ? "nav-link active" : "nav-link link-dark"}
+              aria-current="page"
+              onClick={() => {
+                setSideMenuSelectIndex(2);
+              }}
+            >
+              <img src="settings.png" alt="" width="16" height="16" className="me-2" />
+              {" 設定"}
+            </a>
+          </li>
         </ul>
-        <div className="sidecar__btm align-items-end">
-          <hr />
-          <a
-            href="#"
-            className="d-flex link-dark text-decoration-none"
-            onClick={() => {
-              setIsSettingView(!isSettingView);
-            }}
-          >
-            <img src="settings.png" alt="" width="16" height="16" className="me-2" />{" "}
-            {isSettingView ? "戻る" : "設定"}
-          </a>
-        </div>
       </div>
       <div className="MainContents" style={{ width: "500px" }}>
         {unmanagedRoom ? (
@@ -203,11 +199,11 @@ const Popup = () => {
           <></>
         )}
         <div>
-          {isSettingView ? (
+          {sideMenuSelectIndex === 2 ? (
             <SettingPage />
           ) : (
             <>
-              {isUnreadView ? (
+              {sideMenuSelectIndex === 1 ? (
                 <>
                   <div className="d-flex align-items-center h2 fw-bold m-2">
                     <img src="icon_chatwork.png" className="img-fluid" style={{ height: "1em" }} />
