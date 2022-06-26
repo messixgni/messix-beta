@@ -26,7 +26,7 @@ const HowToRestartNotifToast = ({ roomName }: Props) => {
   return (
     <>
       <div
-        className="managementNotification alert alert-danger alert-dismissible fade show"
+        className="managementNotification alert alert-warning alert-dismissible fade show"
         role="alert"
       >
         <p>
