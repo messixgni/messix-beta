@@ -65,7 +65,7 @@
 .unreadToMessage::after {
   content: "";
   position: absolute;
-  top: -6px;
+  top: 4px;
   right: -6px;
   box-sizing: border-box;
   width: 12px;
