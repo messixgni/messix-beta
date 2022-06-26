@@ -12,10 +12,12 @@ import { changeBadgeText } from "./util";
 import { isUnreadInclusiveStatus, isUnreadInclusiveStatusArray } from "./typeguard";
 import { useUnreplys } from "./hook/useUnreplys";
 import UnreplyList from "./components/UnreplyList";
+import HowToRestartNotifToast from "./components/HowToRestartNotifToast";
 
 const Popup = () => {
   const { isLoading, messages, changeStatus } = useUnreplys();
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
+  const [manageCanceledRoom, setManageCanceledRoom] = useState<ChatworkRoom>();
   const unreads = useLiveQuery(async () => {
     const allManagedRooms = await db.chatworkRoom.toArray();
     const activeRooms = allManagedRooms.filter((elem) => elem.isActive === true);
@@ -196,12 +198,14 @@ const Popup = () => {
               aria-label="Close"
               onClick={() => {
                 onClickAddManageBtn(false);
+                setManageCanceledRoom(unmanagedRoom);
               }}
             ></button>
           </div>
         ) : (
           <></>
         )}
+        <HowToRestartNotifToast roomName={manageCanceledRoom?.name} />
         <div>
           {isSettingView ? (
             <SettingPage />
