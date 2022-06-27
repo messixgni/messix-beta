@@ -209,13 +209,7 @@ const Popup = () => {
           ) : (
             <>
               {sideMenuSelectIndex === 1 ? (
-                <>
-                  <div className="d-flex align-items-center h2 fw-bold m-2">
-                    <img src="icon_chatwork.png" className="img-fluid" style={{ height: "1em" }} />
-                    Chatwork
-                  </div>
-                  {unreads ? <>{unreads.map((unread) => getCountBadge(unread))}</> : <></>}
-                </>
+                <>{unreads ? <>{unreads.map((unread) => getCountBadge(unread))}</> : <></>}</>
               ) : (
                 <UnreplyList />
               )}
