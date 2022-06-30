@@ -13,9 +13,6 @@ const HowToRestartNotifToast = ({ roomName }: Props) => {
     if (settingText !== null) {
       const setting: Setting = JSON.parse(settingText);
       setView(!setting.howToRestartNotifDone);
-    } else {
-      const newSetting: Setting = { howToRestartNotifDone: true };
-      localStorage.setItem("messix-setting", JSON.stringify(newSetting));
     }
     //10秒後に消す
     setTimeout(() => {
