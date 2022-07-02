@@ -10,6 +10,7 @@ const useStampSetting = (): {
     const jsonText = localStorage.getItem("messix-setting");
     if (!jsonText) return;
     const setting: Setting = JSON.parse(jsonText);
+    setActiveStamps(setting.autoChangeMessageStatusStamps!);
   }, []);
   const onChange = (stamps: Stamp[]) => {
     setActiveStamps(stamps);
