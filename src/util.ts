@@ -47,12 +47,3 @@ export const allStamps: { name: Stamp; title: string }[] = [
   { name: "clap", title: "すごい" },
   { name: "yes", title: "いいね" },
 ];
-
-export const getCurrentSetting = (): Setting | undefined => {
-  const settingJson = localStorage.getItem("messix-setting");
-  if (!settingJson) {
-    return undefined;
-  }
-  const currentSetting: Setting = JSON.parse(settingJson);
-  return currentSetting;
-};
