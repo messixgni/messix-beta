@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { Setting } from "./interface/setting";
+import { Setting, Stamp } from "./interface/setting";
 export const changeBadgeText = async () => {
   //const unreadCount = await db.chatworkRoom.filter((cr) => cr.status === "unread").count();
   //chrome.action.setBadgeText({ text: unreadCount === 0 ? "" : unreadCount.toString() });
@@ -38,3 +38,12 @@ const checkSettingFormat = () => {
   }
 };
 checkSettingFormat();
+
+export const allStamps: { name: Stamp; title: string }[] = [
+  { name: "roger", title: "了解" },
+  { name: "bow", title: "ありがとう" },
+  { name: "cracker", title: "おめでとう" },
+  { name: "dance", title: "わーい" },
+  { name: "clap", title: "すごい" },
+  { name: "yes", title: "いいね" },
+];
