@@ -23,12 +23,15 @@ const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
 
 const SettingPage = () => {
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
-  const {activeStamps,onChangeStampSetting} = useStampSetting()
-  const onChangeStampSwitch = (e: React.ChangeEvent<HTMLInputElement>, stamp: { name: Stamp; title: string }) => {
-    if(e.target.checked){
-      onChangeStampSetting([...activeStamps,stamp.name])
-    }else{
-      onChangeStampSetting(activeStamps.filter(st=>st!==stamp.name))
+  const { activeStamps, onChangeStampSetting } = useStampSetting();
+  const onChangeStampSwitch = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    stamp: { name: Stamp; title: string }
+  ) => {
+    if (e.target.checked) {
+      onChangeStampSetting([...activeStamps, stamp.name]);
+    } else {
+      onChangeStampSetting(activeStamps.filter((st) => st !== stamp.name));
     }
   };
   return (
@@ -40,30 +43,30 @@ const SettingPage = () => {
         ))}
       </Form>
 
-      <h2 style={{marginTop:"5px"}}>スタンプで解決</h2>
+      <h2 style={{ marginTop: "5px" }}>スタンプで解決</h2>
       <p>
         メンションがついているメッセージにスタンプを付けることで、返信として扱うオプションです。
       </p>
-      <div style={{marginLeft:"20px"}}>
-      <h4>対象スタンプ</h4>
-      <Form>
-        {allStamps.map((stamp) => (
-          <Form.Switch
-            type="switch"
-            label={ <><img src={`img/${stamp.name}.svg`} alt="ロゴ" width="20" height="20"/>{stamp.title}</>}
-            checked={
-              activeStamps.find(
-                (st) => st === stamp.name
-              ) !== undefined
-            }
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              onChangeStampSwitch(e, stamp);
-            }}
-          />
-        ))}
-      </Form>
+      <div style={{ marginLeft: "20px" }}>
+        <h4>対象スタンプ</h4>
+        <Form>
+          {allStamps.map((stamp) => (
+            <Form.Switch
+              type="switch"
+              label={
+                <>
+                  <img src={`img/${stamp.name}.svg`} alt="ロゴ" width="20" height="20" />
+                  {stamp.title}
+                </>
+              }
+              checked={activeStamps.find((st) => st === stamp.name) !== undefined}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChangeStampSwitch(e, stamp);
+              }}
+            />
+          ))}
+        </Form>
       </div>
-      
     </>
   );
 };
