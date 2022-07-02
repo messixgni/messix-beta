@@ -1,11 +1,11 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import React, { ReactText } from "react";
+import React from "react";
 import { Form } from "react-bootstrap";
 import { db } from "../db";
 import useStampSetting from "../hook/useStampSetting";
 import { ChatworkRoomTable } from "../interface/dbTable";
 import { Stamp } from "../interface/setting";
-import { allStamps, getCurrentSetting } from "../util";
+import { allStamps } from "../util";
 
 type ChatworkRoomActiveSwitchProps = {
   room: ChatworkRoomTable;
@@ -50,7 +50,7 @@ const SettingPage = () => {
         {allStamps.map((stamp) => (
           <Form.Switch
             type="switch"
-            label={ <><img src={"img/"+stamp.name+".svg"} alt="ロゴ" width="20" height="20"/>{stamp.title}</>}
+            label={ <><img src={`img/${stamp.name}.svg`} alt="ロゴ" width="20" height="20"/>{stamp.title}</>}
             checked={
               activeStamps.find(
                 (st) => st === stamp.name
