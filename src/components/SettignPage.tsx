@@ -2,6 +2,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import React, { ReactText } from "react";
 import { Form } from "react-bootstrap";
 import { db } from "../db";
+import useStampSetting from "../hook/useStampSetting";
 import { ChatworkRoomTable } from "../interface/dbTable";
 import { Stamp } from "../interface/setting";
 import { allStamps, getCurrentSetting } from "../util";
@@ -22,8 +23,13 @@ const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
 
 const SettingPage = () => {
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
+  const {activeStamps,onChangeStampSetting} = useStampSetting()
   const onChangeStampSwitch = (e: React.ChangeEvent<HTMLInputElement>, stamp: { name: Stamp; title: string }) => {
-
+    if(e.target.checked){
+      onChangeStampSetting([...activeStamps,stamp.name])
+    }else{
+      onChangeStampSetting(activeStamps.filter(st=>st!==stamp.name))
+    }
   };
   return (
     <>
@@ -34,18 +40,19 @@ const SettingPage = () => {
         ))}
       </Form>
 
-      <h2>スタンプで解決</h2>
+      <h2 style={{marginTop:"5px"}}>スタンプで解決</h2>
       <p>
         メンションがついているメッセージにスタンプを付けることで、返信として扱うオプションです。
       </p>
-      <h3>対象スタンプ</h3>
+      <div style={{marginLeft:"20px"}}>
+      <h4>対象スタンプ</h4>
       <Form>
         {allStamps.map((stamp) => (
           <Form.Switch
             type="switch"
-            label={stamp.title}
+            label={ <><img src={"img/"+stamp.name+".svg"} alt="ロゴ" width="20" height="20"/>{stamp.title}</>}
             checked={
-              getCurrentSetting()?.autoChangeMessageStatusStamps?.find(
+              activeStamps.find(
                 (st) => st === stamp.name
               ) !== undefined
             }
@@ -55,6 +62,8 @@ const SettingPage = () => {
           />
         ))}
       </Form>
+      </div>
+      
     </>
   );
 };
