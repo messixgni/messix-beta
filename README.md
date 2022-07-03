@@ -43,6 +43,8 @@ yarn moribuild
 
 ## Build in watch mode
 
+GoogleAnalytics を含まない開発用ビルドが生成され、コードに変更があるたびにビルドされ直される
+
 ### terminal
 
 ```
