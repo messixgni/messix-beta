@@ -6,6 +6,7 @@ import {
   SetChatworkRoomUnreadsBM,
   UnreadRoomStatus,
 } from "./interface";
+import { Stamps, Stamp, Setting } from "./interface/setting";
 import { changeBadgeText } from "./util";
 
 const updateTableUnreadCount = async (elem: UnreadRoomStatus) => {
@@ -49,8 +50,10 @@ const changeUnreadCount = async (backgroundMessage: SetChatworkRoomUnreadsBM) =>
   });
 };
 
-const setChatworkMessages = async (messages: ChatworkMessageData[]) => {
+const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) => {
   if (messages.length === 0) return;
+  const currentSetting: Setting = JSON.parse(localStorage.getItem("messix-setting")!);
+  const targetStamps = currentSetting.autoChangeMessageStatusStamps!;
   const targetRoom = await db.chatworkRoom.where("rid").equals(messages[0].rid).first();
   if (!targetRoom || !targetRoom.isActive) return;
   messages.forEach(async (message) => {

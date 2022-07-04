@@ -1,4 +1,5 @@
 import { ChatworkMessageTable, ChatworkRoomTable } from "./dbTable";
+import { Stamps } from "./setting";
 
 export type MessageStatus = "normal" | "unread" | "unreply" | "unmanage";
 
@@ -21,7 +22,7 @@ export type SetChatworkRoomUnreadsBM = BackgroundMessage & {
 };
 
 export type SetChatworkMessageBM = BackgroundMessage & {
-  messages: ChatworkMessageData[];
+  messages: (ChatworkMessageData & Stamps)[];
 };
 
 export type BackgroundMessage = {
