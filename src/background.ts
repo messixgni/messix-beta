@@ -9,6 +9,10 @@ import {
 import { Stamps, Stamp, Setting } from "./interface/setting";
 import { changeBadgeText } from "./util";
 
+const isStampIncludedInTarget = (arr1: Stamp[], arr2: Stamp[]) => {
+  return [...arr1, ...arr2].filter((item) => arr1.includes(item) && arr2.includes(item)).length > 0;
+};
+
 const updateTableUnreadCount = async (elem: UnreadRoomStatus) => {
   db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
     const roomRowMatching = await db.chatworkRoom.where("rid").equals(elem.rid).first();
@@ -144,11 +148,13 @@ const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) =
             .first();
           if (replyTargetMessageStatus?.isUnreply === 1) {
             //ユーザーが返信した先のメッセージが未返信状態のとき、未返信ではなくする
+            const stamps = message.stamps;
+            const isUnreply = isStampIncludedInTarget(stamps, targetStamps) ? 1 : 0;
             const messageStatusChangeResult = await db.chatworkMessageStatus.put({
               id: replyTargetMessageStatus.id!,
               messageId: replyTargetMessageStatus.messageId,
               isMarked: replyTargetMessageStatus.isMarked,
-              isUnreply: 0,
+              isUnreply: isUnreply,
             });
           }
         });
