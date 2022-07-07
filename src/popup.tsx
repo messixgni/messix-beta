@@ -8,6 +8,7 @@ import HowToRestartNotifToast from "./components/HowToRestartNotifToast";
 import UnmanagedRoomAddNotification from "./components/UnmanagedRoomAddNotification";
 import CountBadge from "./components/CountBadge";
 import useUnreads from "./hook/useUnreads";
+import ga from "./ga/ga";
 
 const Popup = () => {
   const [manageCanceledRoom, setManageCanceledRoom] = useState<ChatworkRoom>();
@@ -95,14 +96,7 @@ const Popup = () => {
   );
 };
 
-/*
-window.onload = function () {
-  const scriptTag = document.createElement("script");
-  scriptTag.src = chrome.runtime.getURL("./analytics-override.js");
-  scriptTag.type = "text/javascript";
-  document.head.appendChild(scriptTag);
-};
-*/
+window.onload = ga;
 
 ReactDOM.render(
   <React.StrictMode>
