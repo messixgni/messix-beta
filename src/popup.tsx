@@ -13,6 +13,7 @@ import { isUnreadInclusiveStatus, isUnreadInclusiveStatusArray } from "./typegua
 import { useUnreplys } from "./hook/useUnreplys";
 import UnreplyList from "./components/UnreplyList";
 import HowToRestartNotifToast from "./components/HowToRestartNotifToast";
+import ga from "./ga/ga";
 
 const Popup = () => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
@@ -221,14 +222,7 @@ const Popup = () => {
   );
 };
 
-/*
-window.onload = function () {
-  const scriptTag = document.createElement("script");
-  scriptTag.src = chrome.runtime.getURL("./analytics-override.js");
-  scriptTag.type = "text/javascript";
-  document.head.appendChild(scriptTag);
-};
-*/
+window.onload = ga;
 
 ReactDOM.render(
   <React.StrictMode>
