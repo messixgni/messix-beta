@@ -1,5 +1,6 @@
 import { Stamp, Setting } from "../interface/setting";
 import { useState, useEffect } from "react";
+import { getSetting } from "../util";
 
 const useStampSetting = (): {
   activeStamps: Stamp[];
@@ -7,18 +8,18 @@ const useStampSetting = (): {
 } => {
   const [activeStamps, setActiveStamps] = useState<Stamp[]>([]);
   useEffect(() => {
-    const jsonText = localStorage.getItem("messix-setting");
-    if (!jsonText) return;
-    const setting: Setting = JSON.parse(jsonText);
-    setActiveStamps(setting.autoChangeMessageStatusStamps!);
+    (async () => {
+      const { settingJson } = await getSetting("messix-setting");
+      if (!settingJson || !settingJson.autoChangeMessageStatusStamps) return;
+      setActiveStamps(settingJson.autoChangeMessageStatusStamps);
+    })()
   }, []);
-  const onChange = (stamps: Stamp[]) => {
+  const onChange = async (stamps: Stamp[]) => {
     setActiveStamps(stamps);
-    const jsonText = localStorage.getItem("messix-setting");
-    if (!jsonText) return;
-    const setting: Setting = JSON.parse(jsonText);
-    setting.autoChangeMessageStatusStamps = stamps;
-    localStorage.setItem("messix-setting", JSON.stringify(setting));
+    const { bucket, settingJson } = await getSetting("messix-setting");
+    if (!settingJson) return;
+    settingJson.autoChangeMessageStatusStamps = stamps;
+    bucket.set(settingJson);
   };
 
   return {

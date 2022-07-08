@@ -8,6 +8,7 @@ import {
 } from "./interface";
 import { Stamps, Stamp, Setting } from "./interface/setting";
 import { changeBadgeText } from "./util";
+import { getSetting } from "./util";
 
 const isStampIncludedInTarget = (arr1: Stamp[], arr2: Stamp[]) => {
   return [...arr1, ...arr2].filter((item) => arr1.includes(item) && arr2.includes(item)).length > 0;
@@ -56,13 +57,33 @@ const changeUnreadCount = async (backgroundMessage: SetChatworkRoomUnreadsBM) =>
 
 const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) => {
   if (messages.length === 0) return;
-  const currentSetting: Setting = JSON.parse(localStorage.getItem("messix-setting")!);
-  const targetStamps = currentSetting.autoChangeMessageStatusStamps!;
+  const { settingJson } = await getSetting("messix-setting");
+  const targetStamps = settingJson.autoChangeMessageStatusStamps!;
   const targetRoom = await db.chatworkRoom.where("rid").equals(messages[0].rid).first();
   if (!targetRoom || !targetRoom.isActive) return;
   messages.forEach(async (message) => {
     //有効化日-3日よりcreateAtが小さい（前の時間）だったらDB登録をしない
     if (new Date(message.createAt).getTime() < new Date(targetRoom.activeAt).getTime()) return;
+    await db.transaction("rw", db.chatworkMessage, db.chatworkMessageStatus, async () => {
+      const stamps = message.stamps;
+      const isUnreply = isStampIncludedInTarget(stamps, targetStamps) ? 0 : 1;
+      const messageRow = await db.chatworkMessage.where("mid").equals(message.mid).first();
+      if (!messageRow) return;
+      const messageStatusRow = await db.chatworkMessageStatus.where("messageId").equals(messageRow.id!).first();
+      if (!messageStatusRow) return;
+      await db.chatworkMessageStatus.put({
+        id: messageRow.id!,
+        messageId: messageStatusRow.messageId,
+        isMarked: messageStatusRow.isMarked,
+        isUnreply: isUnreply,
+      });
+    })
+      .then(() => {
+        console.log("ok");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     const queryResult = await db.chatworkMessage.where("mid").equals(message.mid).first();
     if (queryResult) return;
     db.transaction(
@@ -149,7 +170,7 @@ const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) =
           if (replyTargetMessageStatus?.isUnreply === 1) {
             //ユーザーが返信した先のメッセージが未返信状態のとき、未返信ではなくする
             const stamps = message.stamps;
-            const isUnreply = isStampIncludedInTarget(stamps, targetStamps) ? 1 : 0;
+            const isUnreply = isStampIncludedInTarget(stamps, targetStamps) ? 0 : 1;
             const messageStatusChangeResult = await db.chatworkMessageStatus.put({
               id: replyTargetMessageStatus.id!,
               messageId: replyTargetMessageStatus.messageId,
@@ -178,7 +199,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
     case "setChatworkMessage":
       const chatworkMessageBM: SetChatworkMessageBM = message;
-      console.log(chatworkMessageBM);
+      // console.log(chatworkMessageBM);
       setChatworkMessages(chatworkMessageBM.messages);
   }
   return true;

@@ -74,8 +74,10 @@ const getMessages: GetMessages = () => {
     for (let i = 0; i < replyElements.length; i++) {
       replys.push(replyElements[i].getAttribute("data-mid")!);
     }
-    const stampsRaw = messageElements[i].querySelectorAll("div.iuZcHo div.ClRL img");
-    const stamps: Stamp[] = [];
+    const messageElement = messageElements[i].querySelector("div");
+    const stampsRaw = messageElement?.querySelectorAll("img")!;
+    console.log(stampsRaw);
+    let stamps: Stamp[] = [];
     if (stampsRaw.length != 0) {
       stampsRaw.forEach(async (stamp) => {
         const text: Stamp = allStamps.find(element => element === stamp.getAttribute("alt"))!;
@@ -83,6 +85,7 @@ const getMessages: GetMessages = () => {
         return Promise.resolve();
       })
     }
+    stamps = stamps.filter(v => v);
     console.log(stamps);
     const message: ChatworkMessageData & Stamps = {
       isMentioned: messageElements[i].getAttribute("class")?.indexOf("mentioned") !== -1,
