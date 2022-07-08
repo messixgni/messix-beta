@@ -11,7 +11,7 @@ const HowToRestartNotifToast = ({ roomName }: Props) => {
   useEffect(() => {
     if (!roomName) return;
     (async () => {
-      const { settingJson } = await getSetting("messix-setting");
+      const { settingJson } = await getSetting();
       if (settingJson) {
         setView(!settingJson.howToRestartNotifDone);
       }

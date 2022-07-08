@@ -15,7 +15,7 @@ export const getTimePastStatus = (time: Date): string => {
 };
 
 const checkSettingFormat = async () => {
-  const { bucket, settingJson } = await getSetting("messix-setting");
+  const { bucket, settingJson } = await getSetting();
   if (!settingJson) {
     //設定ファイルの生成
     const newSetting: Setting = {
@@ -48,8 +48,8 @@ export const allStamps: { name: Stamp; title: string }[] = [
   { name: "yes", title: "いいね" },
 ];
 
-export const getSetting = async (val: string) => {
+export const getSetting = async (val: string = "messix-setting") => {
   const bucket = getBucket<Setting>(val);
   const settingJson = await bucket.get();
   return { bucket, settingJson };
-}
+};

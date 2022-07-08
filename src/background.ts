@@ -57,7 +57,7 @@ const changeUnreadCount = async (backgroundMessage: SetChatworkRoomUnreadsBM) =>
 
 const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) => {
   if (messages.length === 0) return;
-  const { settingJson } = await getSetting("messix-setting");
+  const { settingJson } = await getSetting();
   const targetStamps = settingJson.autoChangeMessageStatusStamps!;
   const targetRoom = await db.chatworkRoom.where("rid").equals(messages[0].rid).first();
   if (!targetRoom || !targetRoom.isActive) return;
