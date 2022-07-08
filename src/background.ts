@@ -166,13 +166,11 @@ const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) =
             .first();
           if (replyTargetMessageStatus?.isUnreply === 1) {
             //ユーザーが返信した先のメッセージが未返信状態のとき、未返信ではなくする
-            const stamps = message.stamps;
-            const isUnreply = isStampIncludedInTarget(stamps, targetStamps) ? 0 : 1;
             const messageStatusChangeResult = await db.chatworkMessageStatus.put({
               id: replyTargetMessageStatus.id!,
               messageId: replyTargetMessageStatus.messageId,
               isMarked: replyTargetMessageStatus.isMarked,
-              isUnreply: isUnreply,
+              isUnreply: 0,
             });
           }
         });
