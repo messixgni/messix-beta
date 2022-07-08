@@ -48,8 +48,8 @@ export const allStamps: { name: Stamp; title: string }[] = [
   { name: "yes", title: "いいね" },
 ];
 
-export async function getSetting(): Promise<[Bucket<Setting>, Setting]> {
+export const getSetting = async (): Promise<[Bucket<Setting>, Setting]> => {
   const bucket = getBucket<Setting>("messix-setting");
-  const settingJson = await  bucket.get();
+  const settingJson = await bucket.get();
   return [bucket, settingJson];
-}
+};
