@@ -71,11 +71,8 @@ const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) =
       if (!messageRow) return;
       const messageStatusRow = await db.chatworkMessageStatus.where("messageId").equals(messageRow.id!).first();
       if (!messageStatusRow) return;
-      await db.chatworkMessageStatus.put({
-        id: messageRow.id!,
-        messageId: messageStatusRow.messageId,
-        isMarked: messageStatusRow.isMarked,
-        isUnreply: isUnreply,
+      await db.chatworkMessageStatus.update(messageRow.id!, {
+        isUnreply: messageStatusRow.isUnreply === 0 ? 0 : isUnreply,
       });
     })
       .then(() => {
