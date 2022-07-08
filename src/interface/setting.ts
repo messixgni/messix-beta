@@ -4,3 +4,7 @@ export type Setting = {
   howToRestartNotifDone: boolean;
   autoChangeMessageStatusStamps?: Stamp[];
 };
+
+export type Stamps = {
+  stamps: Stamp[];
+};

@@ -1,5 +1,6 @@
 import { db } from "./db";
 import { Setting, Stamp } from "./interface/setting";
+import { getBucket, Bucket } from "@extend-chrome/storage";
 export const changeBadgeText = async () => {
   //const unreadCount = await db.chatworkRoom.filter((cr) => cr.status === "unread").count();
   //chrome.action.setBadgeText({ text: unreadCount === 0 ? "" : unreadCount.toString() });
@@ -13,19 +14,18 @@ export const getTimePastStatus = (time: Date): string => {
   return "normal";
 };
 
-const checkSettingFormat = () => {
-  const settingJson = localStorage.getItem("messix-setting");
+const checkSettingFormat = async () => {
+  const [ bucket, settingJson ] = await getSetting();
   if (!settingJson) {
     //設定ファイルの生成
     const newSetting: Setting = {
       howToRestartNotifDone: false,
       autoChangeMessageStatusStamps: ["roger", "bow", "cracker", "dance", "clap", "yes"],
     };
-    localStorage.setItem("messix-setting", JSON.stringify(newSetting));
+    await bucket.set(newSetting);
   } else {
-    const currentSetting: Setting = JSON.parse(settingJson);
-    if (!currentSetting.autoChangeMessageStatusStamps) {
-      currentSetting.autoChangeMessageStatusStamps = [
+    if (!settingJson.autoChangeMessageStatusStamps) {
+      settingJson.autoChangeMessageStatusStamps = [
         "roger",
         "bow",
         "cracker",
@@ -34,7 +34,7 @@ const checkSettingFormat = () => {
         "yes",
       ];
     }
-    localStorage.setItem("messix-setting", JSON.stringify(currentSetting));
+    await bucket.set(settingJson);
   }
 };
 checkSettingFormat();
@@ -47,3 +47,9 @@ export const allStamps: { name: Stamp; title: string }[] = [
   { name: "clap", title: "すごい" },
   { name: "yes", title: "いいね" },
 ];
+
+export const getSetting = async (): Promise<[Bucket<Setting>, Setting]> => {
+  const bucket = getBucket<Setting>("messix-setting");
+  const settingJson = await bucket.get();
+  return [bucket, settingJson];
+};

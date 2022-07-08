@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Setting } from "../interface/setting";
+import { getSetting } from "../util";
 
 type Props = {
   roomName: string | undefined;
@@ -7,13 +8,14 @@ type Props = {
 
 const HowToRestartNotifToast = ({ roomName }: Props) => {
   const [view, setView] = useState(true);
-  const settingText = localStorage.getItem("messix-setting");
   useEffect(() => {
     if (!roomName) return;
-    if (settingText !== null) {
-      const setting: Setting = JSON.parse(settingText);
-      setView(!setting.howToRestartNotifDone);
-    }
+    (async () => {
+      const [bucket, settingJson] = await getSetting();
+      if (settingJson) {
+        setView(!settingJson.howToRestartNotifDone);
+      }
+    })();
     //10秒後に消す
     setTimeout(() => {
       setView(false);

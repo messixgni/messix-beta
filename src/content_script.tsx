@@ -5,6 +5,7 @@ import {
   ChatworkMessageData,
   SetChatworkMessageBM,
 } from "./interface";
+import { Stamps, Stamp } from "./interface/setting"
 
 type GetMessixUserMessageUser = () => MessageUser | undefined;
 const getMessixUserMessageUser: GetMessixUserMessageUser = () => {
@@ -38,9 +39,9 @@ const getMessageUser = (doc: Element) => {
   };
   return messageUser;
 };
-type GetMessages = () => ChatworkMessageData[];
+type GetMessages = () => (ChatworkMessageData & Stamps)[];
 const getMessages: GetMessages = () => {
-  let rtnArray: ChatworkMessageData[] = [];
+  let rtnArray: (ChatworkMessageData & Stamps)[] = [];
   let messixUser = getMessixUserMessageUser();
   const rid = location.href.split("rid")[1];
   if (!messixUser) return rtnArray;
@@ -48,6 +49,7 @@ const getMessages: GetMessages = () => {
   const messageElements = timeLineEmenents?.getElementsByClassName("_message");
   if (!messageElements) return rtnArray;
   let currentUser: MessageUser | undefined;
+  const allStamps: Stamp[] = ["roger", "bow", "cracker", "dance", "clap", "yes"];
   for (let i = 0; i < messageElements.length; i++) {
     const tmpUser = getMessageUser(messageElements[i]);
     const mid = messageElements[i].getAttribute("data-mid");
@@ -72,7 +74,20 @@ const getMessages: GetMessages = () => {
     for (let i = 0; i < replyElements.length; i++) {
       replys.push(replyElements[i].getAttribute("data-mid")!);
     }
-    const message: ChatworkMessageData = {
+    const messageElement = messageElements[i].querySelector("div");
+    const stampsRaw = messageElement?.querySelectorAll("img")!;
+    console.log(stampsRaw);
+    let stamps: Stamp[] = [];
+    if (stampsRaw.length != 0) {
+      stampsRaw.forEach(async (stamp) => {
+        const text: Stamp = allStamps.find(element => element === stamp.getAttribute("alt"))!;
+        stamps.push(text);
+        return Promise.resolve();
+      })
+    }
+    stamps = stamps.filter(v => v);
+    console.log(stamps);
+    const message: ChatworkMessageData & Stamps = {
       isMentioned: messageElements[i].getAttribute("class")?.indexOf("mentioned") !== -1,
       mid: mid!,
       rid: rid,
@@ -82,6 +97,7 @@ const getMessages: GetMessages = () => {
       userName: currentUser?.name!,
       iconUrl: currentUser?.iconUrl!,
       replys: replys,
+      stamps: stamps,
     };
     rtnArray.push(message);
   }
