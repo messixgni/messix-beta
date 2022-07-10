@@ -10,6 +10,7 @@ import CountBadge from "./components/CountBadge";
 import useUnreads from "./hook/useUnreads";
 import ga from "./ga/ga";
 import { useLog } from "./hook/useLog";
+import { RecoilRoot } from "recoil";
 
 const Popup = () => {
   const [manageCanceledRoom, setManageCanceledRoom] = useState<ChatworkRoom>();
@@ -109,7 +110,9 @@ window.onload = ga;
 
 ReactDOM.render(
   <React.StrictMode>
-    <Popup />
+    <RecoilRoot>
+      <Popup />
+    </RecoilRoot>
   </React.StrictMode>,
   document.getElementById("root")
 );
