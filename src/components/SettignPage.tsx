@@ -27,7 +27,7 @@ const SettingPage = () => {
   const copyToClipboard = (target: string) => {
     const copyTarget = document.getElementById(target)!;
     navigator.clipboard.writeText(copyTarget.innerText);
-  }
+  };
   return (
     <>
       <h2>設定{"(通知管理)"}</h2>
@@ -42,13 +42,17 @@ const SettingPage = () => {
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>
-            バグ報告フォームへ遷移
-          </Modal.Title>
+          <Modal.Title>バグ報告フォームへ遷移</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div id="bug-report-text-1">Woohoo, you're reading this text in a modal!</div>
-          <Button onClick={() => { copyToClipboard("bug-report-text-1"); }}>コピー</Button>
+          <Button
+            onClick={() => {
+              copyToClipboard("bug-report-text-1");
+            }}
+          >
+            コピー
+          </Button>
         </Modal.Body>
         <Modal.Footer>
           <a href="./">バグ報告フォームへ遷移する</a>
