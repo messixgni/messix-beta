@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { db } from "../db";
+import { useLog } from "../hook/useLog";
 import { ChatworkRoom } from "../interface";
 import { changeBadgeText } from "../util";
 
@@ -11,6 +12,7 @@ type Props = {
 
 const UnmanagedRoomAddNotification = ({ onCancel }: Props) => {
   const [unmanagedRoom, setUnmanagedRoom] = useState<ChatworkRoom>();
+  const { setLog } = useLog();
   useEffect(() => {
     const getBrowserActiveTabInfo = async () => {
       let queryOptions = { active: true, currentWindow: true };
@@ -28,6 +30,7 @@ const UnmanagedRoomAddNotification = ({ onCancel }: Props) => {
     changeBadgeText();
   }, []);
   const onClickAddManageBtn = (isActive: boolean) => {
+    setLog(`click_addmanageroom_${isActive ? "true" : "false"}`);
     db.transaction("rw", db.chatworkRoom, db.chatworkRoomStatus, async () => {
       const index = await db.chatworkRoom.add({
         name: unmanagedRoom!.name,

@@ -2,6 +2,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import React, { useState } from "react";
 import { Col, Row, Form, Container } from "react-bootstrap";
 import { db } from "../db";
+import { useLog } from "../hook/useLog";
 import {
   ChatworkMessageStatusTable,
   ChatworkMessageTable,
@@ -18,6 +19,7 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
   const messageUser = useLiveQuery(() => db.chatworkUser.get(chatworkMessage.userId));
   const messageRoom = useLiveQuery(() => db.chatworkRoom.get(chatworkMessage.roomId!));
   const [isHovered, setIsHoverd] = useState(false);
+  const { setLog } = useLog();
   const getElapsedTimeText: (target: Date | undefined) => string = (target) => {
     if (!target) return "";
     try {
@@ -42,16 +44,19 @@ const UnreplyListItem = ({ chatworkMessage, onChange }: UnreplyListItemProps) =>
     }
   };
   const onClickStar: React.MouseEventHandler<HTMLElement> = (e) => {
+    setLog("click_star");
     chatworkMessage.isMarked = chatworkMessage.isMarked === 1 ? 0 : 1;
     onChange(chatworkMessage);
     e.stopPropagation();
   };
   const onClickClose: React.MouseEventHandler<HTMLElement> = (e) => {
+    setLog("click_forcecheck");
     chatworkMessage.isUnreply = 0;
     onChange(chatworkMessage);
     e.stopPropagation();
   };
   const onClickItem = () => {
+    setLog("click_unreplymessage");
     window.open(
       `https://www.chatwork.com/#!rid${messageRoom ? messageRoom.rid : ""}-${chatworkMessage.mid}`
     );
