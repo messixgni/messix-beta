@@ -22,6 +22,7 @@ const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
 };
 
 const SettingPage = () => {
+  const { logs } = useLog();
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
   return (
     <>
