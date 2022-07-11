@@ -13,7 +13,7 @@ export const getTimePastStatus = (time: Date): string => {
   return "normal";
 };
 
-export const getEnviroment = async () => {
+export const getEnvironment = async () => {
   const messixVer = chrome.runtime.getManifest().version;
   const useAgentData = navigator?.userAgentData;
   let highEntropyValues: ClientHits = await useAgentData.getHighEntropyValues([
