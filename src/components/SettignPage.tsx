@@ -2,16 +2,19 @@ import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { Form } from "react-bootstrap";
 import { db } from "../db";
+import { useLog } from "../hook/useLog";
 import { ChatworkRoomTable } from "../interface/dbTable";
 
 type ChatworkRoomActiveSwitchProps = {
   room: ChatworkRoomTable;
 };
 const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
+  const { setLog } = useLog();
   const onChange = () => {
     room.isActive = !room.isActive;
     room.activeAt = new Date(Date.now());
     db.chatworkRoom.put(room);
+    setLog("click_roomactiveswitch");
   };
   return (
     <Form.Switch type="switch" label={room.name} checked={room.isActive} onChange={onChange} />
@@ -19,6 +22,7 @@ const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
 };
 
 const SettingPage = () => {
+  const { logs } = useLog();
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
   return (
     <>

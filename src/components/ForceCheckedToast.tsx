@@ -1,6 +1,7 @@
 import React from "react";
 import { Toast, Button } from "react-bootstrap";
 import { db } from "../db";
+import { useLog } from "../hook/useLog";
 import { useUnreplys } from "../hook/useUnreplys";
 import {
   ChatworkMessageStatusTable,
@@ -15,7 +16,9 @@ type Props = {
 
 const ForceCheckedToast = ({ lastChangedMessage, onClose }: Props) => {
   const { changeStatus } = useUnreplys();
+  const { setLog } = useLog();
   const onRestore = async () => {
+    setLog("click_restoreforcecheck");
     changeStatus({
       messageId: lastChangedMessage?.messageId!,
       isUnreply: 1,
