@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { db } from "../db";
 import { useUnreplys } from "../hook/useUnreplys";
 import { ChatworkMessageStatusTable, ChatworkMessageTable } from "../interface/dbTable";
 import { getTimePastStatus } from "../util";

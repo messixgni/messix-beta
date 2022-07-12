@@ -9,12 +9,15 @@ import UnmanagedRoomAddNotification from "./components/UnmanagedRoomAddNotificat
 import CountBadge from "./components/CountBadge";
 import useUnreads from "./hook/useUnreads";
 import ga from "./ga/ga";
+import { useLog } from "./hook/useLog";
+import { RecoilRoot } from "recoil";
 
 const Popup = () => {
   const [manageCanceledRoom, setManageCanceledRoom] = useState<ChatworkRoom>();
   const unreads = useUnreads();
   const unreply = useUnreplys();
   const [sideMenuSelectIndex, setSideMenuSelectIndex] = useState(0);
+  const { setLog } = useLog();
   return (
     <div className="d-flex flex-row" style={{ width: "665px" }}>
       <div className="sidebar d-flex flex-column flex-shrink-0 p-2 bg-light">
@@ -29,7 +32,10 @@ const Popup = () => {
               href="#"
               className={sideMenuSelectIndex === 0 ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
-              onClick={() => setSideMenuSelectIndex(0)}
+              onClick={() => {
+                setLog("click_sidemenu_0");
+                setSideMenuSelectIndex(0);
+              }}
             >
               <img src="unreply.png" width="16" height="16" /> 未返信{" "}
               <CountBadge datas={unreply.messages} />
@@ -40,7 +46,10 @@ const Popup = () => {
               href="#"
               className={sideMenuSelectIndex === 1 ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
-              onClick={() => setSideMenuSelectIndex(1)}
+              onClick={() => {
+                setLog("click_sidemenu_1");
+                setSideMenuSelectIndex(1);
+              }}
             >
               <img src="unread.png" width="16" height="16" /> 未読 <CountBadge datas={unreads} />
             </a>
@@ -52,6 +61,7 @@ const Popup = () => {
               className={sideMenuSelectIndex === 2 ? "nav-link active" : "nav-link link-dark"}
               aria-current="page"
               onClick={() => {
+                setLog("click_sidemenu_2");
                 setSideMenuSelectIndex(2);
               }}
             >
@@ -100,7 +110,9 @@ window.onload = ga;
 
 ReactDOM.render(
   <React.StrictMode>
-    <Popup />
+    <RecoilRoot>
+      <Popup />
+    </RecoilRoot>
   </React.StrictMode>,
   document.getElementById("root")
 );

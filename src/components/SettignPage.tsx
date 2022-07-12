@@ -3,16 +3,19 @@ import { useState } from "react";
 import React from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { db } from "../db";
+import { useLog } from "../hook/useLog";
 import { ChatworkRoomTable } from "../interface/dbTable";
 
 type ChatworkRoomActiveSwitchProps = {
   room: ChatworkRoomTable;
 };
 const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
+  const { setLog } = useLog();
   const onChange = () => {
     room.isActive = !room.isActive;
     room.activeAt = new Date(Date.now());
     db.chatworkRoom.put(room);
+    setLog("click_roomactiveswitch");
   };
   return (
     <Form.Switch type="switch" label={room.name} checked={room.isActive} onChange={onChange} />
@@ -23,6 +26,7 @@ const SettingPage = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const { logs } = useLog();
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
   const copyToClipboard = (target: string) => {
     const copyTarget = document.getElementById(target)!;
