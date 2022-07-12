@@ -102,3 +102,14 @@
   line-height: 1.5em;
   max-height: 4.5em;
 }
+
+.bug-report-content {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5em;
+  max-height: 4.5em;
+  background-color: rgba(0,0,0,0.8);
+  color: white;
+}

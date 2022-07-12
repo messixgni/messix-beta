@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { ChatworkRoom } from "./interface";
-import SettingPage from "./components/SettignPage";
+import SettingPage from "./components/SettingPage";
 import { useUnreplys } from "./hook/useUnreplys";
 import UnreplyList from "./components/UnreplyList";
 import HowToRestartNotifToast from "./components/HowToRestartNotifToast";

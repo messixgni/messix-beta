@@ -1,10 +1,11 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { useState } from "react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { db } from "../db";
 import { useLog } from "../hook/useLog";
 import { ChatworkRoomTable } from "../interface/dbTable";
+import { getEnvironment } from "../util";
+import { ClientHits } from "../interface/setting";
 
 type ChatworkRoomActiveSwitchProps = {
   room: ChatworkRoomTable;
@@ -21,17 +22,33 @@ const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
     <Form.Switch type="switch" label={room.name} checked={room.isActive} onChange={onChange} />
   );
 };
+type Report = {
+  environment: ClientHits;
+  actions: string[];
+}
 
 const SettingPage = () => {
   const [show, setShow] = useState(false);
+  const [report, setReport] = useState<Report>();
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const { logs } = useLog();
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
   const copyToClipboard = (target: string) => {
-    const copyTarget = document.getElementById(target)!;
-    navigator.clipboard.writeText(copyTarget.innerText);
+    const copyTarget = document.getElementById(target)?.getAttribute('placeholder')!;
+    console.log(copyTarget);
+    navigator.clipboard.writeText(copyTarget);
+    const copyButton = document.getElementById("copyButton");
+    copyButton!.innerHTML = "Copied!!"
   };
+  useEffect(() => {
+    (async () => {
+      setReport({
+        environment: await getEnvironment(),
+        actions: logs,
+      });
+    })();
+  })
   return (
     <>
       <h2>設定{"(通知管理)"}</h2>
@@ -44,26 +61,38 @@ const SettingPage = () => {
       <Button variant="danger" onClick={handleShow}>
         バグを報告する
       </Button>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} centered={true} className="overflow-hidden">
         <Modal.Header closeButton>
-          <Modal.Title>バグ報告フォームへ遷移</Modal.Title>
+          <Modal.Title className="fs-6">バグ報告フォームへ遷移</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div id="bug-report-text-1">Woohoo, you're reading this text in a modal!</div>
           <Button
             onClick={() => {
-              copyToClipboard("bug-report-text-1");
+              copyToClipboard("bug-report-text");
             }}
+            variant="outline-primary"
+            className="my-2"
+            id="copyButton"
           >
-            コピー
+            下記のテキストをコピー
           </Button>
+          <Button
+            variant="link"
+            className="m-2"
+            href="https://forms.gle/nSVyeaHdiPaLnyzDA"
+            target="_blank"
+          >
+            バグ報告フォームへ遷移する
+          </Button>
+          <Form.Group>
+            <Form.Control
+              id="bug-report-text"
+              placeholder={JSON.stringify(report)}
+              className="text-truncate"
+              disabled
+            />
+          </Form.Group>
         </Modal.Body>
-        <Modal.Footer>
-          <a href="./">バグ報告フォームへ遷移する</a>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
