@@ -25,7 +25,7 @@ const ChatworkRoomActiveSwitch = ({ room }: ChatworkRoomActiveSwitchProps) => {
 type Report = {
   environment: ClientHits;
   actions: string[];
-}
+};
 
 const SettingPage = () => {
   const [show, setShow] = useState(false);
@@ -35,11 +35,11 @@ const SettingPage = () => {
   const { logs } = useLog();
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
   const copyToClipboard = (target: string) => {
-    const copyTarget = document.getElementById(target)?.getAttribute('placeholder')!;
+    const copyTarget = document.getElementById(target)?.getAttribute("placeholder")!;
     console.log(copyTarget);
     navigator.clipboard.writeText(copyTarget);
     const copyButton = document.getElementById("copyButton");
-    copyButton!.innerHTML = "Copied!!"
+    copyButton!.innerHTML = "Copied!!";
   };
   useEffect(() => {
     (async () => {
@@ -48,7 +48,7 @@ const SettingPage = () => {
         actions: logs,
       });
     })();
-  })
+  });
   return (
     <>
       <h2>設定{"(通知管理)"}</h2>
