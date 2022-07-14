@@ -6,6 +6,8 @@
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js",
+    "releasebuild": "mv ./src/ga/ga.ts ./src/ga/ga.dev&&mv ./src/ga/ga.production ./src/ga/ga.ts&&webpack --config webpack/webpack.prod.js&&mv ./src/ga/ga.ts ./src/ga/ga.production&&mv ./src/ga/ga.dev ./src/ga/ga.ts",
+    "moribuild": "mv ./public/analytics-override.js ./public/analytics-override.default&&mv ./public/analytics-override.mori ./public/analytics-override.js&&mv ./src/ga/ga.ts ./src/ga/ga.dev&&mv ./src/ga/ga.production ./src/ga/ga.ts&&webpack --config webpack/webpack.prod.js&&mv ./src/ga/ga.ts ./src/ga/ga.production&&mv ./src/ga/ga.dev ./src/ga/ga.ts&&mv ./public/analytics-override.js ./public/analytics-override.mori&&mv ./public/analytics-override.default ./public/analytics-override.js",
     "clean": "rimraf dist",
     "test": "npx jest",
     "style": "prettier --write \"src/**/*.{ts,tsx}\""
@@ -23,7 +25,8 @@
     "dexie-react-hooks": "^1.1.1",
     "react": "^17.0.1",
     "react-bootstrap": "^2.3.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "recoil": "^0.7.4"
   },
   "devDependencies": {
     "@types/chrome": "0.0.158",

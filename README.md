@@ -19,11 +19,31 @@ yarn install
 
 ## Build
 
+GoogleAnalytics を含まない最適化ビルドが生成される
+
 ```
 yarn build
 ```
 
+## Release Build
+
+GoogleAnalytics を含むリリース用が生成される
+
+```
+yarn releasebuild
+```
+
+## MoriEditon Build
+
+森さん向け GoogleAnalytics を含むリリース用が生成される
+
+```
+yarn moribuild
+```
+
 ## Build in watch mode
+
+GoogleAnalytics を含まない開発用ビルドが生成され、コードに変更があるたびにビルドされ直される
 
 ### terminal
 

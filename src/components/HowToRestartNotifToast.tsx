@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLog } from "../hook/useLog";
 import { Setting } from "../interface/setting";
 import { getSetting } from "../util";
 
@@ -8,6 +9,7 @@ type Props = {
 
 const HowToRestartNotifToast = ({ roomName }: Props) => {
   const [view, setView] = useState(true);
+  const { setLog } = useLog();
   useEffect(() => {
     if (!roomName) return;
     (async () => {
@@ -18,6 +20,7 @@ const HowToRestartNotifToast = ({ roomName }: Props) => {
     })();
     //10秒後に消す
     setTimeout(() => {
+      setLog("auto_closehowtorestartnotif");
       setView(false);
     }, 10000);
   }, [roomName]);
@@ -37,6 +40,7 @@ const HowToRestartNotifToast = ({ roomName }: Props) => {
           data-bs-dismiss="alert"
           aria-label="Close"
           onClick={() => {
+            setLog("click_closehowtorestartnotif");
             setView(false);
           }}
         ></button>

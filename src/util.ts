@@ -1,6 +1,7 @@
 import { db } from "./db";
 import { Setting, Stamp } from "./interface/setting";
 import { getBucket, Bucket } from "@extend-chrome/storage";
+import { ClientHits } from "./interface/setting";
 export const changeBadgeText = async () => {
   //const unreadCount = await db.chatworkRoom.filter((cr) => cr.status === "unread").count();
   //chrome.action.setBadgeText({ text: unreadCount === 0 ? "" : unreadCount.toString() });
@@ -15,7 +16,7 @@ export const getTimePastStatus = (time: Date): string => {
 };
 
 const checkSettingFormat = async () => {
-  const [ bucket, settingJson ] = await getSetting();
+  const [bucket, settingJson] = await getSetting();
   if (!settingJson) {
     //設定ファイルの生成
     const newSetting: Setting = {
@@ -52,4 +53,17 @@ export const getSetting = async (): Promise<[Bucket<Setting>, Setting]> => {
   const bucket = getBucket<Setting>("messix-setting");
   const settingJson = await bucket.get();
   return [bucket, settingJson];
+};
+export const getEnvironment = async () => {
+  const messixVer = chrome.runtime.getManifest().version;
+  const useAgentData = navigator?.userAgentData;
+  let highEntropyValues: ClientHits = await useAgentData.getHighEntropyValues([
+    "platform",
+    "platformVersion",
+    "architecture",
+    "model",
+    "bitness",
+  ]);
+  highEntropyValues.messixVer = messixVer;
+  return highEntropyValues;
 };
