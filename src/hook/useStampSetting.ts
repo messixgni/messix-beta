@@ -12,11 +12,11 @@ const useStampSetting = (): {
       const [bucket, settingJson] = await getSetting();
       if (!settingJson || !settingJson.autoChangeMessageStatusStamps) return;
       setActiveStamps(settingJson.autoChangeMessageStatusStamps);
-    })()
+    })();
   }, []);
   const onChange = async (stamps: Stamp[]) => {
     setActiveStamps(stamps);
-    const [ bucket, settingJson ] = await getSetting();
+    const [bucket, settingJson] = await getSetting();
     if (!settingJson) return;
     settingJson.autoChangeMessageStatusStamps = stamps;
     bucket.set(settingJson);
