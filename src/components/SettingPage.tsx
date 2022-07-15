@@ -6,6 +6,9 @@ import { useLog } from "../hook/useLog";
 import { ChatworkRoomTable } from "../interface/dbTable";
 import { getEnvironment } from "../util";
 import { ClientHits } from "../interface/setting";
+import { Stamp } from "../interface/setting";
+import { allStamps } from "../util";
+import useStampSetting from "../hook/useStampSetting";
 
 type ChatworkRoomActiveSwitchProps = {
   room: ChatworkRoomTable;
@@ -41,6 +44,17 @@ const SettingPage = () => {
     const copyButton = document.getElementById("copyButton");
     copyButton!.innerHTML = "Copied!!";
   };
+  const { activeStamps, onChangeStampSetting } = useStampSetting();
+  const onChangeStampSwitch = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    stamp: { name: Stamp; title: string }
+  ) => {
+    if (e.target.checked) {
+      onChangeStampSetting([...activeStamps, stamp.name]);
+    } else {
+      onChangeStampSetting(activeStamps.filter((st) => st !== stamp.name));
+    }
+  };
   useEffect(() => {
     (async () => {
       setReport({
@@ -57,8 +71,32 @@ const SettingPage = () => {
           <ChatworkRoomActiveSwitch room={cr} />
         ))}
       </Form>
+      <h2 style={{ marginTop: "5px" }}>スタンプで解決</h2>
+      <p>
+        メンションがついているメッセージにスタンプを付けることで、返信として扱うオプションです。
+      </p>
+      <div style={{ marginLeft: "20px" }}>
+        <h4>対象スタンプ</h4>
+        <Form>
+          {allStamps.map((stamp) => (
+            <Form.Switch
+              type="switch"
+              label={
+                <>
+                  <img src={`img/${stamp.name}.svg`} alt="ロゴ" width="20" height="20" />
+                  {stamp.title}
+                </>
+              }
+              checked={activeStamps.find((st) => st === stamp.name) !== undefined}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChangeStampSwitch(e, stamp);
+              }}
+            />
+          ))}
+        </Form>
+      </div>
       <hr />
-      <Button variant="danger" onClick={handleShow}>
+      <Button variant="danger" onClick={handleShow} style={{ marginBottom: "5px" }}>
         バグを報告する
       </Button>
       <Modal show={show} onHide={handleClose} centered={true} className="overflow-hidden">
