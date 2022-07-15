@@ -64,17 +64,21 @@ const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) =
   messages.forEach(async (message) => {
     //有効化日-3日よりcreateAtが小さい（前の時間）だったらDB登録をしない
     if (new Date(message.createAt).getTime() < new Date(targetRoom.activeAt).getTime()) return;
-    await db.transaction("rw", db.chatworkMessage, db.chatworkMessageStatus, async () => {
-      const stamps = message.stamps;
-      const isUnreply = isStampIncludedInTarget(stamps, targetStamps) ? 0 : 1;
-      const messageRow = await db.chatworkMessage.where("mid").equals(message.mid).first();
-      if (!messageRow) return;
-      const messageStatusRow = await db.chatworkMessageStatus.where("messageId").equals(messageRow.id!).first();
-      if (!messageStatusRow) return;
-      await db.chatworkMessageStatus.update(messageRow.id!, {
-        isUnreply: messageStatusRow.isUnreply === 0 ? 0 : isUnreply,
-      });
-    })
+    await db
+      .transaction("rw", db.chatworkMessage, db.chatworkMessageStatus, async () => {
+        const stamps = message.stamps;
+        const isUnreply = isStampIncludedInTarget(stamps, targetStamps) ? 0 : 1;
+        const messageRow = await db.chatworkMessage.where("mid").equals(message.mid).first();
+        if (!messageRow) return;
+        const messageStatusRow = await db.chatworkMessageStatus
+          .where("messageId")
+          .equals(messageRow.id!)
+          .first();
+        if (!messageStatusRow) return;
+        await db.chatworkMessageStatus.update(messageRow.id!, {
+          isUnreply: messageStatusRow.isUnreply === 0 ? 0 : isUnreply,
+        });
+      })
       .then(() => {
         console.log("ok");
       })

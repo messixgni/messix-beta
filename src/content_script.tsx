@@ -5,7 +5,7 @@ import {
   ChatworkMessageData,
   SetChatworkMessageBM,
 } from "./interface";
-import { Stamps, Stamp } from "./interface/setting"
+import { Stamps, Stamp } from "./interface/setting";
 
 type GetMessixUserMessageUser = () => MessageUser | undefined;
 const getMessixUserMessageUser: GetMessixUserMessageUser = () => {
@@ -80,12 +80,12 @@ const getMessages: GetMessages = () => {
     let stamps: Stamp[] = [];
     if (stampsRaw.length != 0) {
       stampsRaw.forEach(async (stamp) => {
-        const text: Stamp = allStamps.find(element => element === stamp.getAttribute("alt"))!;
+        const text: Stamp = allStamps.find((element) => element === stamp.getAttribute("alt"))!;
         stamps.push(text);
         return Promise.resolve();
-      })
+      });
     }
-    stamps = stamps.filter(v => v);
+    stamps = stamps.filter((v) => v);
     console.log(stamps);
     const message: ChatworkMessageData & Stamps = {
       isMentioned: messageElements[i].getAttribute("class")?.indexOf("mentioned") !== -1,
