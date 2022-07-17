@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Modal } from "react-bootstrap";
 import { db } from "../db";
 import { useLog } from "../hook/useLog";
@@ -31,18 +31,21 @@ type Report = {
 };
 
 const SettingPage = () => {
+  const bugText = useRef<HTMLInputElement>(null)
+  const copyButton = useRef<HTMLButtonElement>(null)
   const [show, setShow] = useState(false);
   const [report, setReport] = useState<Report>();
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const { logs } = useLog();
   const chatworkRooms = useLiveQuery(() => db.chatworkRoom.toArray());
-  const copyToClipboard = (target: string) => {
-    const copyTarget = document.getElementById(target)?.getAttribute("placeholder")!;
-    console.log(copyTarget);
+  const copyToClipboard = () => {
+    if (bugText.current === null) return;
+    if (copyButton.current === null) return;
+    const copyTarget = bugText.current.placeholder;
+    console.log(copyTarget)
     navigator.clipboard.writeText(copyTarget);
-    const copyButton = document.getElementById("copyButton");
-    copyButton!.innerHTML = "Copied!!";
+    copyButton.current.innerText = "Copied!!";
   };
   const { activeStamps, onChangeStampSetting } = useStampSetting();
   const onChangeStampSwitch = (
@@ -106,8 +109,9 @@ const SettingPage = () => {
         <Modal.Body>
           <Button
             onClick={() => {
-              copyToClipboard("bug-report-text");
+              copyToClipboard();
             }}
+            ref={copyButton}
             variant="outline-primary"
             className="my-2"
             id="copyButton"
@@ -124,7 +128,7 @@ const SettingPage = () => {
           </Button>
           <Form.Group>
             <Form.Control
-              id="bug-report-text"
+              ref={bugText}
               placeholder={JSON.stringify(report)}
               className="text-truncate"
               disabled
