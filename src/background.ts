@@ -1,8 +1,10 @@
 import { db } from "./db";
 import {
   BackgroundMessage,
+  ChatworkExistRoom,
   ChatworkMessageData,
   SetChatworkMessageBM,
+  SetChatworkRoomsBM,
   SetChatworkRoomUnreadsBM,
   UnreadRoomStatus,
 } from "./interface";
@@ -188,6 +190,24 @@ const setChatworkMessages = async (messages: (ChatworkMessageData & Stamps)[]) =
       });
   });
 };
+const setChatworkRooms = async (rooms: ChatworkExistRoom[]) => {
+  const [bucket, settingJson] = await getSetting();
+  if (!settingJson.addRoomMode) {
+    settingJson.addRoomMode = "pinAuto";
+    bucket.set(settingJson);
+  }
+  if (settingJson.addRoomMode === "manual") return;
+  rooms.forEach(async (room) => {
+    const isExit = (await db.chatworkRoom.where("rid").equals(room.rid).count()) !== 0;
+    if (isExit) return;
+    await db.chatworkRoom.add({
+      rid: room.rid,
+      name: room.name,
+      isActive: settingJson.addRoomMode === "pinAuto" ? room.isPined : true,
+      activeAt: new Date(Date.now()),
+    });
+  });
+};
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const backgroundMessage: BackgroundMessage = message;
@@ -200,6 +220,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const chatworkMessageBM: SetChatworkMessageBM = message;
       // console.log(chatworkMessageBM);
       setChatworkMessages(chatworkMessageBM.messages);
+      break;
+    case "setChatworkRooms":
+      const chatworkRoomsBM: SetChatworkRoomsBM = message;
+      setChatworkRooms(chatworkRoomsBM.rooms);
+      break;
   }
   return true;
 });

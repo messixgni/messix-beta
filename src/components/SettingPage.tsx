@@ -9,6 +9,7 @@ import { ClientHits } from "../interface/setting";
 import { Stamp } from "../interface/setting";
 import { allStamps } from "../util";
 import useStampSetting from "../hook/useStampSetting";
+import AddRoomModeSelect from "./Setting/AddRoomModeSelect";
 
 type ChatworkRoomActiveSwitchProps = {
   room: ChatworkRoomTable;
@@ -71,6 +72,7 @@ const SettingPage = () => {
           <ChatworkRoomActiveSwitch room={cr} />
         ))}
       </Form>
+      <AddRoomModeSelect />
       <h2 style={{ marginTop: "5px" }}>スタンプで解決</h2>
       <p>
         メンションがついているメッセージにスタンプを付けることで、返信として扱うオプションです。

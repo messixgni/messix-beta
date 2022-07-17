@@ -1,8 +1,10 @@
 export type Stamp = "roger" | "bow" | "cracker" | "dance" | "clap" | "yes";
+export type AddRoomMode = "manual" | "pinAuto" | "allAuto";
 
 export type Setting = {
   howToRestartNotifDone: boolean;
   autoChangeMessageStatusStamps?: Stamp[];
+  addRoomMode?: AddRoomMode;
 };
 
 export type Stamps = {

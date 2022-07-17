@@ -24,9 +24,12 @@ export type SetChatworkRoomUnreadsBM = BackgroundMessage & {
 export type SetChatworkMessageBM = BackgroundMessage & {
   messages: (ChatworkMessageData & Stamps)[];
 };
+export type SetChatworkRoomsBM = BackgroundMessage & {
+  rooms: ChatworkExistRoom[];
+};
 
 export type BackgroundMessage = {
-  requestKind: "setChatworkRoomUnreads" | "setChatworkMessage";
+  requestKind: "setChatworkRoomUnreads" | "setChatworkMessage" | "setChatworkRooms";
 };
 
 export type ChatworkRoom = {
@@ -50,4 +53,10 @@ export type ChatworkMessageData = {
   userName: string;
   iconUrl: string;
   replys: string[];
+};
+
+export type ChatworkExistRoom = {
+  name: string;
+  rid: string;
+  isPined: boolean;
 };
