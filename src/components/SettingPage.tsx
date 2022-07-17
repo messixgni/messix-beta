@@ -31,8 +31,8 @@ type Report = {
 };
 
 const SettingPage = () => {
-  const bugText = useRef<HTMLInputElement>(null)
-  const copyButton = useRef<HTMLButtonElement>(null)
+  const bugText = useRef<HTMLInputElement>(null);
+  const copyButton = useRef<HTMLButtonElement>(null);
   const [show, setShow] = useState(false);
   const [report, setReport] = useState<Report>();
   const handleClose = () => setShow(false);
@@ -43,7 +43,7 @@ const SettingPage = () => {
     if (bugText.current === null) return;
     if (copyButton.current === null) return;
     const copyTarget = bugText.current.placeholder;
-    console.log(copyTarget)
+    console.log(copyTarget);
     navigator.clipboard.writeText(copyTarget);
     copyButton.current.innerText = "Copied!!";
   };
