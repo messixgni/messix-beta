@@ -74,9 +74,7 @@ const SettingPage = () => {
       </Form>
       <AddRoomModeSelect />
       <h2 style={{ marginTop: "5px" }}>スタンプで解決</h2>
-      <p>
-        メンションがついているメッセージにスタンプを付けることで、返信として扱うオプションです。
-      </p>
+      <p>ルームをMessixの管理対象に自動で追加する設定です。</p>
       <div style={{ marginLeft: "20px" }}>
         <h4>対象スタンプ</h4>
         <Form>
