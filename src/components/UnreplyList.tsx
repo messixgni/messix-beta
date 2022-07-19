@@ -22,11 +22,8 @@ const UnreplyList = () => {
   return (
     <>
       <div style={{ overflowY: "scroll", maxHeight: "400px" }}>
-        {messages === undefined || messages.length === 0 ? (
-          <p>未返信のメッセージはありません</p>
-        ) : (
-          <></>
-        )}
+        {messages === undefined ? <p>Loading...</p> : <></>}
+        {messages?.length === 0 ? <p>未返信のメッセージはありません</p> : <></>}
         {messages?.map((message, i) => (
           <div key={message.id}>
             {i !== 0 && checkSpanNeed(messages[i - 1], message) ? (
