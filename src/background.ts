@@ -198,8 +198,22 @@ const setChatworkRooms = async (rooms: ChatworkExistRoom[]) => {
   }
   if (settingJson.addRoomMode === "manual") return;
   rooms.forEach(async (room) => {
-    const isExit = (await db.chatworkRoom.where("rid").equals(room.rid).count()) !== 0;
-    if (isExit) return;
+    const targetRoom = await db.chatworkRoom.where("rid").equals(room.rid).first();
+    if (targetRoom) {
+      if (settingJson.addRoomMode === "pinAuto" && room.isPined && !targetRoom.isActive) {
+        await db.chatworkRoom.put(
+          {
+            id: targetRoom.id,
+            rid: targetRoom.rid,
+            name: targetRoom.name,
+            isActive: true,
+            activeAt: new Date(Date.now()),
+          },
+          targetRoom.id
+        );
+      }
+      return;
+    }
     await db.chatworkRoom.add({
       rid: room.rid,
       name: room.name,
