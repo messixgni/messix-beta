@@ -93,7 +93,7 @@ const Popup = () => {
                 <>
                   {unreads ? (
                     <>
-                      {CheckUnreadEmpty(unreads) ? <p>未読リストは空です!</p> : <></>}
+                      {CheckUnreadEmpty(unreads) ? <p>未読ルームはありません</p> : <></>}
                       {unreads.map((unread) => (
                         <CountBadge datas={unread} />
                       ))}
