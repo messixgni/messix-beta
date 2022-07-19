@@ -26,9 +26,7 @@ const AddRoomModeSelect = () => {
   return (
     <>
       <h2 style={{ marginTop: "5px" }}>通知管理自動追加設定</h2>
-      <p>
-        メンションがついているメッセージにスタンプを付けることで、返信として扱うオプションです。
-      </p>
+      <p>ルームをMessixの管理対象に自動で追加する設定です。</p>
       <Form>
         {checkOptions.map((option) => (
           <Form.Check
