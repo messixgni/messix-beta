@@ -22,7 +22,6 @@ const UnreplyList = () => {
   return (
     <>
       <div style={{ overflowY: "scroll", maxHeight: "400px" }}>
-        {messages === undefined ? <p>Loading...</p> : <></>}
         {messages?.length === 0 ? <p>未返信のメッセージはありません</p> : <></>}
         {messages?.map((message, i) => (
           <div key={message.id}>
