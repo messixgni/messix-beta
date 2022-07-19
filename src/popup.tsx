@@ -11,6 +11,12 @@ import useUnreads from "./hook/useUnreads";
 import ga from "./ga/ga";
 import { useLog } from "./hook/useLog";
 import { RecoilRoot } from "recoil";
+import { UnreadInclusiveStatus } from "./interface";
+
+const CheckUnreadEmpty = (unreads: UnreadInclusiveStatus[]) => {
+  const unreadList = unreads.filter((unread: UnreadInclusiveStatus) => unread.unreadCount !== 0);
+  return unreadList.length === 0;
+};
 
 const Popup = () => {
   const [manageCanceledRoom, setManageCanceledRoom] = useState<ChatworkRoom>();
@@ -87,6 +93,7 @@ const Popup = () => {
                 <>
                   {unreads ? (
                     <>
+                      {CheckUnreadEmpty(unreads) ? <p>未読リストは空です!</p> : <></>}
                       {unreads.map((unread) => (
                         <CountBadge datas={unread} />
                       ))}
