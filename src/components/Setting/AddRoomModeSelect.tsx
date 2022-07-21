@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
+import { db } from "../../db";
 import { AddRoomMode } from "../../interface/setting";
 import { getSetting } from "../../util";
 
@@ -22,6 +23,14 @@ const AddRoomModeSelect = () => {
     settingJson.addRoomMode = mode;
     bucket.set(settingJson);
     setCurrentMode(mode);
+    if (mode === "allAuto") {
+      const allRoom = await db.chatworkRoom.toArray();
+      allRoom.forEach(async (room) => {
+        if (room.isActive) return;
+        room.isActive = true;
+        await db.chatworkRoom.put(room, room.id);
+      });
+    }
   };
   return (
     <>
