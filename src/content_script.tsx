@@ -4,6 +4,8 @@ import {
   UnreadRoomStatus,
   ChatworkMessageData,
   SetChatworkMessageBM,
+  ChatworkExistRoom,
+  SetChatworkRoomsBM,
 } from "./interface";
 import { Stamps, Stamp } from "./interface/setting";
 
@@ -149,9 +151,37 @@ const getUnreadMessages = () => {
   chrome.runtime.sendMessage(Message);
 };
 
+const getRooms = () => {
+  const isAllChatView =
+    document
+      .getElementById("_roomListContainer")
+      ?.innerHTML.toString()
+      .indexOf("すべてのチャット") !== -1;
+  if (!isAllChatView) return;
+  const roomElements = document.getElementById("RoomList")?.children[0].children;
+  if (!roomElements) return;
+  let rooms: ChatworkExistRoom[] = [];
+  for (let i = 0; i < roomElements.length; i++) {
+    const roomName = roomElements[i].getAttribute("aria-label");
+    const rid = roomElements[i].getAttribute("data-rid");
+    const isPined = roomElements[i].getElementsByClassName("_showDescription").length === 0;
+    rooms.push({
+      name: roomName!,
+      rid: rid!,
+      isPined: isPined,
+    });
+  }
+  const message: SetChatworkRoomsBM = {
+    requestKind: "setChatworkRooms",
+    rooms: rooms,
+  };
+  chrome.runtime.sendMessage(message);
+};
+
 const check = () => {
   getUnreadMessages();
   checkMessages();
+  getRooms();
 };
 let loop: NodeJS.Timer;
 if (location.href.indexOf("chatwork.com") !== -1) loop = setInterval(check, 100);
