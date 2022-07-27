@@ -68,7 +68,7 @@ const SettingPage = () => {
     })();
   });
   return (
-    <>
+    <div style={{ overflowY: "scroll", maxHeight: "400px" }}>
       <h2>設定{"(通知管理)"}</h2>
       <Form>
         {chatworkRooms?.map((cr) => (
@@ -101,7 +101,18 @@ const SettingPage = () => {
         </Form>
       </div>
       <hr />
-      <Button variant="danger" onClick={handleShow} style={{ marginBottom: "5px" }}>
+      <h2>使い方とバグ報告</h2>
+      <p>
+        Messixβの詳しい使い方は
+        <a
+          href="https://messix.notion.site/Messix-d9e9d1296f564d0c946d52daa407663e"
+          target="_blank"
+        >
+          こちらのマニュアル
+        </a>
+        にてご確認ください。
+      </p>
+      <Button variant="danger" onClick={handleShow} style={{ marginBottom: "2px" }}>
         バグを報告する
       </Button>
       <Modal show={show} onHide={handleClose} centered={true} className="overflow-hidden">
@@ -138,7 +149,7 @@ const SettingPage = () => {
           </Form.Group>
         </Modal.Body>
       </Modal>
-    </>
+    </div>
   );
 };
 
