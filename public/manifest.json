@@ -3,7 +3,7 @@
 
   "name": "Messix β",
   "description": "『Messix』はChatworkにおけるやり取りの返事忘れ、対応漏れを防ぐためのブラウザ拡張機能サービスです。",
-  "version": "2.0",
+  "version": "2.1",
 
   "options_ui": {
     "page": "options.html"
