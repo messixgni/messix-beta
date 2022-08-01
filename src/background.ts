@@ -247,7 +247,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 const checkBadge = async () => {
   const badgeCount = await db.chatworkMessageStatus.where("isUnreply").equals(1).count();
   if (badgeCount != 0) {
-    chrome.action.setBadgeText({ text: badgeCount.toString() });
+    chrome.action.setBadgeText({ text: badgeCount >= 10 ? "9+" : badgeCount.toString() });
   } else {
     chrome.action.setBadgeText({ text: "" });
   }
