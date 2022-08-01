@@ -1,4 +1,3 @@
-import { check } from "prettier";
 import { db } from "./db";
 import {
   BackgroundMessage,
