@@ -1,3 +1,4 @@
+import { check } from "prettier";
 import { db } from "./db";
 import {
   BackgroundMessage,
@@ -253,3 +254,5 @@ const checkBadge = async () => {
 };
 
 let loop: NodeJS.Timer = setInterval(checkBadge, 1000);
+
+chrome.runtime.onStartup.addListener(() => checkBadge());
