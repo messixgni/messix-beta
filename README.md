@@ -1,7 +1,11 @@
-# Messix-MVP1-Chrome-Addon
+# Messixβ
 
-Chatwork 向けに未返信管理を行える Messix のプロトタイプ。  
-サーバーを用いないでブラウザーの IndexDB を用いている。
+Chatwork 向けに未返信管理を行える Chrome 拡張
+
+## メンテナンスに関して
+
+Messixβ は現在積極的な開発が行われていない状態です。
+もし、修正や機能追加を行いたい場合は Fork などを検討ください。
 
 ## Setup
 
@@ -14,8 +18,6 @@ yarn install
 以下のプラグインを入れること
 
 - Prettier
-
-...
 
 ## Build
 
@@ -31,14 +33,6 @@ GoogleAnalytics を含むリリース用が生成される
 
 ```
 yarn releasebuild
-```
-
-## MoriEditon Build
-
-森さん向け GoogleAnalytics を含むリリース用が生成される
-
-```
-yarn moribuild
 ```
 
 ## Build in watch mode
