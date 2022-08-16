@@ -2,6 +2,8 @@
 
 Chatwork 向けに未返信管理を行える Chrome 拡張
 
+[Chrome 拡張ストアはこちら](https://chrome.google.com/webstore/detail/messix-%CE%B2/bbefmfcmnjkpmpbbbagdoklendekcjdk?hl=ja&authuser=0)
+
 ## メンテナンスに関して
 
 Messixβ は現在積極的な開発が行われていない状態です。
